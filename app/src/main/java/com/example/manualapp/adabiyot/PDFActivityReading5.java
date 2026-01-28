@@ -11,6 +11,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.manualapp.R;
 import com.github.barteksc.pdfviewer.PDFView;
 
+import java.util.Objects;
+
 public class PDFActivityReading5 extends AppCompatActivity {
 
     PDFView pdfView;
@@ -27,7 +29,7 @@ public class PDFActivityReading5 extends AppCompatActivity {
         }
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.baseline_menu_open_24);
         getSupportActionBar().setTitle("");
 

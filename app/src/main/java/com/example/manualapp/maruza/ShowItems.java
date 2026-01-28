@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ public class ShowItems extends AppCompatActivity {
     SubjectAdapter adapter;
     RecyclerView recyclerView;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +65,11 @@ public class ShowItems extends AppCompatActivity {
         list.add(new SubjectModel("6-Maruza"));
         list.add(new SubjectModel("7-Maruza"));
         list.add(new SubjectModel("8-Maruza"));
+        list.add(new SubjectModel("9-Maruza"));
+        list.add(new SubjectModel("10-Maruza"));
+        list.add(new SubjectModel("Gidravlik muftalar"));
+        list.add(new SubjectModel("Gidravlik uzatma"));
+        list.add(new SubjectModel("Gidravlik transformatorlar"));
 
 
         adapter = new SubjectAdapter(this, list);

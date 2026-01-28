@@ -19,7 +19,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextColor="@color/transparent"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="VALEOLOGIYA ASOSLARI"
+            app:title="GIDRAVLIK FANI"
             app:titleCollapseMode="scale">
 
             <ImageView
@@ -32,9 +32,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="VALEOLOGIYA ASOSLARI fanidan  \n mobil ilova"
+                android:text="GIDRAVLIK FANIDA\nMOBILE ILOVA"
                 android:textColor="@color/white"
-                android:textSize="20dp"
+                android:textSize="30dp"
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.Toolbar

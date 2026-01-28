@@ -72,7 +72,33 @@ public class PDFActivityReading2 extends AppCompatActivity {
         {
             pdfView.fromAsset("maruza/maruza-8.pdf").load();
             chaptername.setText(chapter);
+        }if (postion==8)
+        {
+            pdfView.fromAsset("maruza/maruza-9.pdf").load();
+            chaptername.setText(chapter);
         }
+        if (postion==9)
+        {
+            pdfView.fromAsset("maruza/maruza-10.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==10)
+        {
+            pdfView.fromAsset("maruza/maruza-10.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==11)
+        {
+            pdfView.fromAsset("maruza/maruza-12.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==12)
+        {
+            pdfView.fromAsset("maruza/maruza-13.pdf").load();
+            chaptername.setText(chapter);
+        }
+
+
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
