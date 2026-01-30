@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.example.manualapp.adabiyot.ShowItems5;
 import com.example.manualapp.amaliyot.ShowItems4;
+import com.example.manualapp.labaratoriya.ShowItems3;
 import com.example.manualapp.maruza.ShowItems;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +37,15 @@ public class MainActivity extends AppCompatActivity {
                 navigateToOtherPageAmaliyot(chapterName);
             }
         });
+        // labarotaoriya
+        ImageView imageView3 = findViewById(R.id.image5);
+        imageView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String chapterName = "Chapter 1"; // Replace with the actual chapter name
+                navigateToOtherPageLaboratoriya(chapterName);
+            }
+        });
 //        adabiyot
         ImageView imageView4 = findViewById(R.id.image7);
         imageView4.setOnClickListener(new View.OnClickListener() {
@@ -45,38 +55,20 @@ public class MainActivity extends AppCompatActivity {
                 navigateToOtherPageAdabiyot3(chapterName);
             }
         });
-        //Ishchi oquv dastur for ImageView image6
-        imageView = findViewById(R.id.image6);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("Ishchi o’quv fan dastur .pdf", "Ishchi o'quv fan dasturi");
-            }
-        });
-        //       Glosary for ImageView imageGlos
-        imageView = findViewById(R.id.imageGlos);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("GLOSARIY.pdf", "Glosary");
-            }
-        });
-
-
-//      Uquv fan dasturi for imageView  imageUq
-        imageView = findViewById(R.id.imageUq);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("O'quv dasturi.pdf", "O'quv fan dasturi");
-            }
-        });
+//        //Ishchi oquv dastur for ImageView image6
+//        imageView = findViewById(R.id.image6);
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openPdfActivity("Ishchi o’quv fan dastur .pdf", "Ishchi o'quv fan dasturi");
+//            }
+//        });
 //     Mustaqil talim for imageView  imageMus
         imageView = findViewById(R.id.imageMus);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openPdfActivity("MUSTAQIL TA’LIM.pdf", "Mustaqil ta'lim");
+                openPdfActivity("Gidravlikamasalalar.pdf", "Gidravlik masalalar");
             }
         });
 
@@ -85,31 +77,16 @@ public class MainActivity extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openPdfActivity("TARQATMA MATERIALLAR.pdf", "Tarqatma materiallar");
+                openPdfActivity("SILLABUSgidravlika.pdf", "SILLABUS");
             }
         });
-        //     Baholash for imageView  imageBaholash
-        imageView = findViewById(R.id.imageBaholash);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("Baholash va nazorat qilish mezonlari..pdf", "Baholash mezonlari");
-            }
-        });
-        //     Oraliq for imageView  imageOral
-        imageView = findViewById(R.id.imageOral);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("Valeologiya asoslari fanidan oraliq nazorat savollari.pdf", "Oraliq nazorat savollari");
-            }
-        });
+
         //     Test for imageView  imageTestQueiz
         imageView = findViewById(R.id.imageTestQueiz);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openPdfActivity("test.pdf", "Test savollar");
+                openPdfActivity("Gidravlik_savollar.pdf", "Gidravlik savollar");
             }
         });
         //     Obyektivka for imageView  imageObyekt
@@ -132,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void navigateToOtherPageMaruza(String chapterName) {
         Intent intent = new Intent(MainActivity.this, ShowItems.class);
+        intent.putExtra("name", chapterName);
+        startActivity(intent);
+    }
+    private void navigateToOtherPageLaboratoriya(String chapterName) {
+        Intent intent = new Intent(MainActivity.this, ShowItems3.class);
         intent.putExtra("name", chapterName);
         startActivity(intent);
     }

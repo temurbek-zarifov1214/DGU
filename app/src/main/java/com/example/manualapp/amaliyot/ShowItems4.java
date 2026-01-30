@@ -67,12 +67,6 @@ public class ShowItems4 extends AppCompatActivity {
         list.add(new SubjectModel("Amaliy mashg'ulot - 5"));
         list.add(new SubjectModel("Amaliy mashg'ulot - 6"));
         list.add(new SubjectModel("Amaliy mashg'ulot - 7"));
-        list.add(new SubjectModel("Amaliy mashg'ulot - 8"));
-        list.add(new SubjectModel("Amaliy mashg'ulot - 9"));
-        list.add(new SubjectModel("Amaliy mashg'ulot - 10"));
-        list.add(new SubjectModel("Amaliy mashg'ulot - 11"));
-        list.add(new SubjectModel("Amaliy mashg'ulot - 12"));
-        list.add(new SubjectModel("Amaliy mashg'ulot - 13"));
 
         adapter = new SubjectAdapter4(this, list);
 

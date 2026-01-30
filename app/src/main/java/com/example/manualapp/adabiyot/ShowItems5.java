@@ -54,7 +54,8 @@ public class ShowItems5 extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
 
 
-        list.add(new SubjectModel("Янги дарслик Валеология 2021"));
+        list.add(new SubjectModel("Gidravlika va gidravlik uzatmalar"));
+        list.add(new SubjectModel("Gidravlika asoslari, nasoslar va kompresslar"));
 
 
 
