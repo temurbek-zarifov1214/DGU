@@ -31,6 +31,12 @@
         <activity
             android:name=".amaliyot.ShowItems4"
             android:exported="false" />
+        <activity
+            android:name=".labaratoriya.ShowItems3"
+            android:exported="false" />
+        <activity
+            android:name=".labaratoriya.PDFActivityReading3"
+            android:exported="false" />
 
         <activity
             android:name=".maruza.ShowItems"

@@ -11,6 +11,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.manualapp.R;
 import com.github.barteksc.pdfviewer.PDFView;
 
+import java.util.Objects;
+
 public class PDFActivityReading5 extends AppCompatActivity {
 
     PDFView pdfView;
@@ -27,7 +29,7 @@ public class PDFActivityReading5 extends AppCompatActivity {
         }
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.baseline_menu_open_24);
         getSupportActionBar().setTitle("");
 
@@ -40,7 +42,12 @@ public class PDFActivityReading5 extends AppCompatActivity {
 
         if (postion==0)
         {
-            pdfView.fromAsset("qollamma/Янги дарслик Валеология 2021.pdf").load();
+            pdfView.fromAsset("qollamma/Gidravlika va gidravlik uzatmalar.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==1)
+        {
+            pdfView.fromAsset("qollamma/Gidravlika asoslari, nasoslar va kompresslar.pdf").load();
             chaptername.setText(chapter);
         }
     }

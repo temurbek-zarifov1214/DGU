@@ -19,7 +19,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextColor="@color/transparent"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="VALEOLOGIYA ASOSLARI"
+            app:title="GIDRAVLIK FANI"
             app:titleCollapseMode="scale">
 
             <ImageView
@@ -32,9 +32,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="VALEOLOGIYA ASOSLARI fanidan  \n mobil ilova"
+                android:text="GIDRAVLIK FANIDA\nMOBILE ILOVA"
                 android:textColor="@color/white"
-                android:textSize="20dp"
+                android:textSize="30dp"
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.Toolbar
@@ -209,7 +209,7 @@
                             android:id="@+id/text3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Ishchi o'quv fan dastur"
+                            android:text="Labaratoriya"
                             android:textAlignment="center"
                             android:textColor="#34346E"
                             android:textSize="12sp"
@@ -266,102 +266,6 @@
                 </TableRow>
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:orientation="vertical">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/white_btn_background">
-
-                            <ImageView
-                                android:id="@+id/imageGlosary"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/circle_green" />
-
-                            <ImageView
-                                android:id="@+id/imageGlos"
-                                android:layout_width="70dp"
-                                android:layout_height="70dp"
-                                app:layout_constraintBottom_toBottomOf="@+id/imageGlosary"
-                                app:layout_constraintEnd_toEndOf="@+id/imageGlosary"
-                                app:layout_constraintStart_toStartOf="@+id/imageGlosary"
-                                app:layout_constraintTop_toTopOf="@+id/imageGlosary"
-                                app:srcCompat="@drawable/dictionary" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <TextView
-                            android:id="@+id/textGlosary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Glosary"
-                            android:textAlignment="center"
-                            android:textColor="#34346E"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:orientation="vertical">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/white_btn_background">
-
-                            <ImageView
-                                android:id="@+id/imageUquv"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/circle_green" />
-
-                            <ImageView
-                                android:id="@+id/imageUq"
-                                android:layout_width="70dp"
-                                android:layout_height="70dp"
-                                app:layout_constraintBottom_toBottomOf="@+id/imageUquv"
-                                app:layout_constraintEnd_toEndOf="@+id/imageUquv"
-                                app:layout_constraintStart_toStartOf="@+id/imageUquv"
-                                app:layout_constraintTop_toTopOf="@+id/imageUquv"
-                                app:srcCompat="@drawable/check" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <TextView
-                            android:id="@+id/textOquv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="O'quv fan dastur"
-                            android:textAlignment="center"
-                            android:textColor="#34346E"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center">
 
@@ -403,7 +307,7 @@
                             android:id="@+id/textMustaqil"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Mustaqil ta'lim"
+                            android:text="Gidravlik masalalar"
                             android:textAlignment="center"
                             android:textColor="#34346E"
                             android:textSize="12sp"
@@ -449,105 +353,7 @@
                             android:id="@+id/textTarqatma"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Tarqatma materiallar"
-                            android:textAlignment="center"
-                            android:textColor="#34346E"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            />
-                    </LinearLayout>
-
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:orientation="vertical">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/white_btn_background">
-
-                            <ImageView
-                                android:id="@+id/imageBah"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/circle_green" />
-
-                            <ImageView
-                                android:id="@+id/imageBaholash"
-                                android:layout_width="70dp"
-                                android:layout_height="70dp"
-                                app:layout_constraintBottom_toBottomOf="@+id/imageBah"
-                                app:layout_constraintEnd_toEndOf="@+id/imageBah"
-                                app:layout_constraintStart_toStartOf="@+id/imageBah"
-                                app:layout_constraintTop_toTopOf="@+id/imageBah"
-                                app:srcCompat="@drawable/checkbox" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <TextView
-                            android:id="@+id/textBaholash"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Baholash va nazorat qilish mezonlari"
-                            android:textAlignment="center"
-                            android:textColor="#34346E"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:orientation="vertical">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/white_btn_background">
-
-                            <ImageView
-                                android:id="@+id/imageOraliq"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/circle_green" />
-
-                            <ImageView
-                                android:id="@+id/imageOral"
-                                android:layout_width="70dp"
-                                android:layout_height="70dp"
-                                app:layout_constraintBottom_toBottomOf="@+id/imageOraliq"
-                                app:layout_constraintEnd_toEndOf="@+id/imageOraliq"
-                                app:layout_constraintStart_toStartOf="@+id/imageOraliq"
-                                app:layout_constraintTop_toTopOf="@+id/imageOraliq"
-                                app:srcCompat="@drawable/checklist" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <TextView
-                            android:id="@+id/textOraliq"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Oraliq nazorat savollari"
+                            android:text="SILLABUS"
                             android:textAlignment="center"
                             android:textColor="#34346E"
                             android:textSize="12sp"
@@ -599,7 +405,7 @@
                             android:id="@+id/textTest"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Test"
+                            android:text="Gidravlik savollar"
                             android:textAlignment="center"
                             android:textColor="#34346E"
                             android:textSize="12sp"
