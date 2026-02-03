@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openPdfActivity("Gidravlikamasalalar.pdf", "Gidravlik masalalar");
+                openPdfActivity("Gidravlikamasalalar.pdf", "Gidravlika masalalar");
             }
         });
 
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openPdfActivity("Gidravlik_savollar.pdf", "Gidravlik savollar");
+                openPdfActivity("Gidravlik_savollar.pdf", "Gidravlika savollar");
             }
         });
         //     Obyektivka for imageView  imageObyekt
