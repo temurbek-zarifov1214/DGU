@@ -7,6 +7,21 @@
     android:background="@drawable/bg_main_dark_blue"
     tools:context=".ui.list.ShowItemsActivity">
 
+    <FrameLayout
+        android:id="@+id/movingBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/movingElement"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="left|center_vertical"
+            android:alpha="0.28"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_moving_education" />
+    </FrameLayout>
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -67,7 +82,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="0dp"
+                android:paddingBottom="80dp"
                 android:clipToPadding="false" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:contentDescription="@string/add_file"
+        app:srcCompat="@drawable/ic_add"
+        app:backgroundTint="@color/dark_blue_primary"
+        app:tint="@color/white" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

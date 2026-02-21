@@ -1,5 +1,7 @@
 package com.example.manualapp;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.manualapp.domain.ContentType;
 import com.example.manualapp.ui.list.ShowItemsActivity;
+import com.example.manualapp.util.MovingBackgroundHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +18,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        View movingBg = findViewById(R.id.movingBackground);
+        View movingEl = movingBg != null ? movingBg.findViewById(R.id.movingElement) : null;
+        if (movingEl != null) movingEl.setAlpha(0.38f);
+        MovingBackgroundHelper.startMovingBackground(this, movingBg);
 
         bindCard(R.id.card1, ContentType.MARUZA);
         bindCard(R.id.card2, ContentType.AMALIYOT);
@@ -35,5 +43,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ShowItemsActivity.class);
         intent.putExtra(ContentType.KEY, contentType);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MovingBackgroundHelper.stopMovingBackground(this);
     }
 }

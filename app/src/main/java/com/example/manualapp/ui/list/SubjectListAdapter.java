@@ -43,9 +43,13 @@ public class SubjectListAdapter extends RecyclerView.Adapter<SubjectListAdapter.
         holder.subjectName.setText(model.getSubjectName());
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, PDFActivityReading.class);
-            intent.putExtra(ContentType.KEY, contentType);
             intent.putExtra("name", model.getSubjectName());
-            intent.putExtra("position", position);
+            if (model.isCustom()) {
+                intent.putExtra("customFilePath", model.getCustomFilePath());
+            } else {
+                intent.putExtra(ContentType.KEY, contentType);
+                intent.putExtra("position", position);
+            }
             context.startActivity(intent);
         });
     }

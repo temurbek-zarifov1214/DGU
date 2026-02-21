@@ -4,7 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_main_dark_blue"
     tools:context=".PDFActivityReading">
+
+    <FrameLayout
+        android:id="@+id/movingBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/movingElement"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="left|center_vertical"
+            android:alpha="0.28"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_moving_education" />
+    </FrameLayout>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"

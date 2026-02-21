@@ -3,6 +3,7 @@ package com.example.manualapp.ui.pdf;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +11,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.manualapp.R;
 import com.example.manualapp.domain.ContentType;
+import com.example.manualapp.util.MovingBackgroundHelper;
 import com.github.barteksc.pdfviewer.PDFView;
+
+import java.io.File;
 
 public class PDFActivityReading extends AppCompatActivity {
 
@@ -21,6 +25,8 @@ public class PDFActivityReading extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdfreading);
+
+        MovingBackgroundHelper.startMovingBackground(this, findViewById(R.id.movingBackground));
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -35,6 +41,20 @@ public class PDFActivityReading extends AppCompatActivity {
 
         pdfView = findViewById(R.id.pdfView);
         chapterNameView = findViewById(R.id.chapterNames);
+
+        String customFilePath = getIntent().getStringExtra("customFilePath");
+        if (customFilePath != null && !customFilePath.isEmpty()) {
+            String name = getIntent().getStringExtra("name");
+            chapterNameView.setText(name != null ? name : "");
+            File file = new File(customFilePath);
+            if (file.exists()) {
+                pdfView.fromFile(file).load();
+            } else {
+                Toast.makeText(this, R.string.file_not_found, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            return;
+        }
 
         ContentType contentType = (ContentType) getIntent().getSerializableExtra(ContentType.KEY);
         if (contentType != null) {
@@ -62,5 +82,11 @@ public class PDFActivityReading extends AppCompatActivity {
 
     private void loadPdfFromAsset(String path) {
         pdfView.fromAsset(path).load();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MovingBackgroundHelper.stopMovingBackground(this);
     }
 }
