@@ -11,7 +11,7 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#425057">
+        android:background="#7E897C">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
@@ -35,9 +35,9 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="Komparativistik pedagogika"
-                android:textSize="25dp"
+                android:textSize="28dp"
                 android:textStyle="bold"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 />
 
             <androidx.appcompat.widget.Toolbar
@@ -54,7 +54,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#E1DEDE"
+        android:background="#879983"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout

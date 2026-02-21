@@ -72,7 +72,7 @@ public class ShowItems extends AppCompatActivity {
 
         // Set the manual name to the TextView in the Toolbar
         TextView textView = findViewById(R.id.imageForList);
-        textView.setText("Maruzadan matnlarssi");
+        textView.setText("Maruzadan matni");
         CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setTitle("Maruzadan matnlari");
     }
