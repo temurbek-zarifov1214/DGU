@@ -15,32 +15,13 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="260dp"
+            android:background="@drawable/bg_header_hero"
             app:collapsedTitleTextColor="@color/white"
             app:contentScrim="@color/dark_blue_primary"
             app:expandedTitleTextColor="@color/transparent"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
             app:title="Komparativistik pedagogika fanini"
             app:titleCollapseMode="scale">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/backwhole"
-                    android:contentDescription="@null" />
-
-                <ImageView
-                    android:id="@+id/educationAnimation"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/anim_education_background"
-                    android:alpha="0.35"
-                    android:contentDescription="@null" />
-            </FrameLayout>
 
             <TextView
                 android:layout_width="match_parent"

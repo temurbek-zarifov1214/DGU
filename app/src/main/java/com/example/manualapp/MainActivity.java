@@ -1,6 +1,5 @@
 package com.example.manualapp;
 
-import android.graphics.drawable.AnimationDrawable;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,11 +15,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        View animView = findViewById(R.id.educationAnimation);
-        if (animView != null && animView.getBackground() instanceof AnimationDrawable) {
-            ((AnimationDrawable) animView.getBackground()).start();
-        }
 
         bindCard(R.id.card1, ContentType.MARUZA);
         bindCard(R.id.card2, ContentType.AMALIYOT);

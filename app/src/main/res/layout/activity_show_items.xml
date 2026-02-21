@@ -11,12 +11,13 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_header_dark_blue">
+        android:background="@android:color/transparent">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="220dp"
+            android:background="@drawable/bg_header_hero"
             app:collapsedTitleTextColor="@color/white"
             app:contentScrim="@color/dark_blue_primary"
             app:expandedTitleTextColor="@color/transparent"
@@ -24,36 +25,20 @@
             app:title="Maruzadan matni"
             app:titleCollapseMode="scale">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/iconlist"
-                    android:contentDescription="@null" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/scrim_dark" />
-            </FrameLayout>
-
             <TextView
                 android:id="@+id/imageForList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:paddingHorizontal="24dp"
+                android:paddingHorizontal="28dp"
                 android:shadowColor="#CC000000"
                 android:shadowDx="0"
                 android:shadowDy="2"
-                android:shadowRadius="4"
+                android:shadowRadius="5"
                 android:textColor="@color/white"
-                android:textSize="26sp"
-                android:textStyle="bold" />
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbarList"
@@ -70,25 +55,19 @@
         android:background="@drawable/bg_main_dark_blue"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="28dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:paddingHorizontal="0dp"
+                android:clipToPadding="false" />
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
