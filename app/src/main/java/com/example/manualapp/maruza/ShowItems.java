@@ -64,12 +64,6 @@ public class ShowItems extends AppCompatActivity {
         list.add(new SubjectModel("5-Maruza"));
         list.add(new SubjectModel("6-Maruza"));
         list.add(new SubjectModel("7-Maruza"));
-        list.add(new SubjectModel("8-Maruza"));
-        list.add(new SubjectModel("9-Maruza"));
-        list.add(new SubjectModel("10-Maruza"));
-        list.add(new SubjectModel("Gidravlik muftalar"));
-        list.add(new SubjectModel("Gidravlik uzatma"));
-        list.add(new SubjectModel("Gidravlik transformatorlar"));
 
 
         adapter = new SubjectAdapter(this, list);

@@ -23,7 +23,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             applicationVariants.all { variant ->
                 variant.outputs.all {
-                    outputFileName = "Gidravlika_fani.apk"
+                    outputFileName = "Komparativistik_pedagogika.apk"
                 }
             }
         }

@@ -21,7 +21,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextColor="@color/transparent"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="Texnik tizimlarda axborot texnologiyalar"
+            app:title="Komparativistik pedagogika"
             app:titleCollapseMode="scale">
 
             <ImageView
@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Texnik tizimlarda axborot texnologiyalar"
+                android:text="Komparativistik pedagogika"
                 android:textSize="25dp"
                 android:textStyle="bold"
                 android:textColor="@color/white"

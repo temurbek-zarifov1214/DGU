@@ -21,9 +21,9 @@
             android:name=".maruza.PDFActivityReading2"
             android:exported="false"
             />
-        <activity android:name=".adabiyot.PDFActivityReading5"
+        <activity android:name=".glossary.PDFActivityReading5"
             android:exported="false"/>
-        <activity android:name=".adabiyot.ShowItems5"
+        <activity android:name=".glossary.ShowItems5"
             android:exported="false"/>
         <activity
             android:name=".amaliyot.PDFActivityReading4"
@@ -32,15 +32,34 @@
             android:name=".amaliyot.ShowItems4"
             android:exported="false" />
         <activity
-            android:name=".labaratoriya.ShowItems3"
+            android:name=".tarqatma.ShowItems3"
             android:exported="false" />
         <activity
-            android:name=".labaratoriya.PDFActivityReading3"
+            android:name=".tarqatma.PDFActivityReading3"
             android:exported="false" />
 
         <activity
             android:name=".maruza.ShowItems"
             android:exported="false" />
+
+        <activity android:name=".dgu.PDFActivityReading6"
+            android:exported="false"/>
+        <activity android:name=".dgu.ShowItems6"
+            android:exported="false"/>
+        <activity android:name=".malumotnoma.PDFActivityReading7"
+            android:exported="false"/>
+        <activity android:name=".malumotnoma.ShowItems7"
+            android:exported="false"/>
+        <activity android:name=".oraliqtest.PDFActivityReading8"
+            android:exported="false"/>
+        <activity android:name=".oraliqtest.ShowItems8"
+            android:exported="false"/>
+        <activity android:name=".yakuniytest.PDFActivityReading9"
+            android:exported="false"/>
+        <activity android:name=".yakuniytest.ShowItems9"
+            android:exported="false"/>
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

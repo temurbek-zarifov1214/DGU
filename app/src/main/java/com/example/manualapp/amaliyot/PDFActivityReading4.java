@@ -71,6 +71,45 @@ public class PDFActivityReading4 extends AppCompatActivity {
             pdfView.fromAsset("amaliyot/amaliy-7.pdf").load();
             chaptername.setText(chapter);
         }
+        if (postion==7)
+        {
+            pdfView.fromAsset("amaliyot/amaliy-8.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==8)
+        {
+            pdfView.fromAsset("amaliyot/amaliy-9.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==9)
+        {
+            pdfView.fromAsset("amaliyot/amaliy-10.pdf").load();
+            chaptername.setText(chapter);
+        }   if (postion==10)
+        {
+            pdfView.fromAsset("amaliyot/amaliy-11.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==11)
+        {
+            pdfView.fromAsset("amaliyot/amaliy-12.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==12)
+        {
+            pdfView.fromAsset("amaliyot/amaliy-13.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==13)
+        {
+            pdfView.fromAsset("amaliyot/amaliy-14.pdf").load();
+            chaptername.setText(chapter);
+        }
+        if (postion==14)
+        {
+            pdfView.fromAsset("amaliyot/amaliy-15.pdf").load();
+            chaptername.setText(chapter);
+        }
 
     }
     @Override

@@ -7,10 +7,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.manualapp.adabiyot.ShowItems5;
+import com.example.manualapp.dgu.ShowItems6;
+import com.example.manualapp.glossary.ShowItems5;
 import com.example.manualapp.amaliyot.ShowItems4;
-import com.example.manualapp.labaratoriya.ShowItems3;
+import com.example.manualapp.malumotnoma.ShowItems7;
+import com.example.manualapp.oraliqtest.ShowItems8;
+import com.example.manualapp.tarqatma.ShowItems3;
 import com.example.manualapp.maruza.ShowItems;
+import com.example.manualapp.yakuniytest.ShowItems9;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
@@ -37,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 navigateToOtherPageAmaliyot(chapterName);
             }
         });
-        // labarotaoriya
+        // Tarqatma material
         ImageView imageView3 = findViewById(R.id.image5);
         imageView3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,57 +50,60 @@ public class MainActivity extends AppCompatActivity {
                 navigateToOtherPageLaboratoriya(chapterName);
             }
         });
-//        adabiyot
+//        Glossary
         ImageView imageView4 = findViewById(R.id.image7);
         imageView4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String chapterName = "Chapter 1"; // Replace with the actual chapter name
-                navigateToOtherPageAdabiyot3(chapterName);
+                navigateToGlossary3(chapterName);
             }
         });
-//        //Ishchi oquv dastur for ImageView image6
-//        imageView = findViewById(R.id.image6);
+
+//     Oraliq nazorat for imageView  imageMus
+        ImageView oraliqnazorat = findViewById(R.id.imageMus);
+        oraliqnazorat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String chapterName = "Chapter 1"; // Replace with the actual chapter name
+                navigateToOraliqNazorat(chapterName);
+            }
+        });
+//      yakuniy nazorat for imageView  imageMus
+        ImageView yakuniyNazorat = findViewById(R.id.imageTar);
+        yakuniyNazorat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String chapterName = "Chapter 1"; // Replace with the actual chapter name
+                navigateToYakuniyNazorat(chapterName);
+            }
+        });
+//     DGU for imageView  imageTestQueiz
+        ImageView dgu = findViewById(R.id.imageTestQueiz);
+        dgu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String chapterName = "Chapter 1"; // Replace with the actual chapter name
+                navigateToDGU(chapterName);
+            }
+        });
+//     maulmotnoma for imageView  imageTestQueiz
+        ImageView malumotnoma = findViewById(R.id.imageObyekt);
+        malumotnoma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String chapterName = "Chapter 1"; // Replace with the actual chapter name
+                navigateToMalumotnoma(chapterName);
+            }
+        });
+//        //     Obyektivka for imageView  imageObyekt
+//        imageView = findViewById(R.id.imageObyekt);
 //        imageView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                openPdfActivity("Ishchi o’quv fan dastur .pdf", "Ishchi o'quv fan dasturi");
+//                openPdfActivity("obyektivka.pdf", "Dastur mualiflari");
 //            }
 //        });
-//     Mustaqil talim for imageView  imageMus
-        imageView = findViewById(R.id.imageMus);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("Gidravlikamasalalar.pdf", "Gidravlika masalalar");
-            }
-        });
-
-        //     Tarqatma materiallar for imageView  imageTar
-        imageView = findViewById(R.id.imageTar);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("SILLABUSgidravlika.pdf", "SILLABUS");
-            }
-        });
-
-        //     Test for imageView  imageTestQueiz
-        imageView = findViewById(R.id.imageTestQueiz);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("Gidravlik_savollar.pdf", "Gidravlika savollar");
-            }
-        });
-        //     Obyektivka for imageView  imageObyekt
-        imageView = findViewById(R.id.imageObyekt);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("obyektivka.pdf", "Dastur mualiflari");
-            }
-        });
 
     }
 
@@ -124,10 +131,31 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void navigateToOtherPageAdabiyot3(String chapterName) {
+    private void navigateToGlossary3(String chapterName) {
         Intent intent = new Intent(MainActivity.this, ShowItems5.class);
         intent.putExtra("name", chapterName);
         startActivity(intent);
     }
+    private void navigateToOraliqNazorat(String chapterName) {
+        Intent intent = new Intent(MainActivity.this, ShowItems8.class);
+        intent.putExtra("name", chapterName);
+        startActivity(intent);
+    }
+    private void navigateToYakuniyNazorat(String chapterName) {
+        Intent intent = new Intent(MainActivity.this, ShowItems9.class);
+        intent.putExtra("name", chapterName);
+        startActivity(intent);
+    }
+    private void navigateToDGU(String chapterName) {
+        Intent intent = new Intent(MainActivity.this, ShowItems6.class);
+        intent.putExtra("name", chapterName);
+        startActivity(intent);
+    }
+    private void navigateToMalumotnoma(String chapterName) {
+        Intent intent = new Intent(MainActivity.this, ShowItems7.class);
+        intent.putExtra("name", chapterName);
+        startActivity(intent);
+    }
+
 
 }
