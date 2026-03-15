@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Particle background -->
+    <!-- LAYER 1: Particle animated background -->
     <com.example.manualapp.ui.particle.ParticleView
         android:id="@+id/particleView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Content -->
+    <!-- LAYER 2: Screen content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@android:color/transparent"
         android:paddingTop="36dp">
 
-        <!-- ── Navbar ── -->
+        <!-- ── Navbar (#0D2560) ───────────────────────────────────────── -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="#CC071535"
+            android:background="#CC0D2560"
             android:orientation="horizontal"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
@@ -49,29 +51,41 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp" />
 
-            <!-- Spacer to balance back button -->
+            <!-- Balance spacer -->
             <View
                 android:layout_width="36dp"
                 android:layout_height="36dp" />
         </LinearLayout>
 
-        <!-- ── PDF Viewer ── -->
-        <com.github.barteksc.pdfviewer.PDFView
-            android:id="@+id/pdfView"
+        <!-- ── PDF Viewer wrapped in CardView for subtle border ───────── -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#1A071535"
+            app:strokeColor="#22FFFFFF"
+            app:strokeWidth="1dp">
 
-        <!-- ── Page navigation bar ── -->
+            <com.github.barteksc.pdfviewer.PDFView
+                android:id="@+id/pdfView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- ── Page navigation bar ────────────────────────────────────── -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="52dp"
             android:orientation="horizontal"
             android:gravity="center"
-            android:background="#1AFFFFFF"
+            android:background="#CC0D2560"
             android:paddingStart="24dp"
             android:paddingEnd="24dp">
 
@@ -80,7 +94,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="#FFFFFF"
+                android:tint="#B3FFFFFF"
                 android:background="@drawable/ripple_glass_circle"
                 android:contentDescription="Previous" />
 
@@ -99,9 +113,10 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_chevron_right"
-                android:tint="#FFFFFF"
+                android:tint="#B3FFFFFF"
                 android:background="@drawable/ripple_glass_circle"
                 android:contentDescription="Next" />
         </LinearLayout>
+
     </LinearLayout>
 </FrameLayout>

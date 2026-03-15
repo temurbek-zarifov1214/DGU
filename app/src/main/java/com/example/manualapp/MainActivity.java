@@ -1,17 +1,21 @@
 package com.example.manualapp;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
 
 import com.example.manualapp.domain.ContentType;
 import com.example.manualapp.ui.list.ShowItemsActivity;
@@ -19,16 +23,14 @@ import com.example.manualapp.ui.particle.ParticleView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ParticleView particleView;
+
     // ── Menu data ─────────────────────────────────────────────────────────────
     private static final int[] ICONS = {
-            R.drawable.ic_book,
-            R.drawable.ic_clock,
-            R.drawable.ic_folder,
-            R.drawable.ic_book_open,
-            R.drawable.ic_question,
-            R.drawable.ic_check_circle,
-            R.drawable.ic_document,
-            R.drawable.ic_person
+            R.drawable.ic_book,       R.drawable.ic_clock,
+            R.drawable.ic_folder,     R.drawable.ic_book_open,
+            R.drawable.ic_question,   R.drawable.ic_check_circle,
+            R.drawable.ic_document,   R.drawable.ic_person
     };
     private static final int[] ICON_BG_COLORS = {
             0x33FFEB3B,  // yellow  — Maruzalar
@@ -53,19 +55,51 @@ public class MainActivity extends AppCompatActivity {
             "Test",     "Imtihon",      "PDF",      "Ma'lumot"
     };
     private static final ContentType[] TYPES = {
-            ContentType.MARUZA, ContentType.AMALIYOT, ContentType.TARQATMA,
-            ContentType.GLOSSARY, ContentType.ORALIQ,  ContentType.YAKUNIY,
-            ContentType.DGU,    ContentType.MALUMOTNOMA
+            ContentType.MARUZA,       ContentType.AMALIYOT,
+            ContentType.TARQATMA,     ContentType.GLOSSARY,
+            ContentType.ORALIQ,       ContentType.YAKUNIY,
+            ContentType.DGU,          ContentType.MALUMOTNOMA
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
-        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+
+        // Edge-to-edge with branded status/nav colours
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(Color.parseColor("#071535"));
+        window.setNavigationBarColor(Color.parseColor("#071535"));
+
+        // Custom nav bar colour (if ActionBar visible)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setBackgroundDrawable(
+                    new ColorDrawable(Color.parseColor("#0D2560")));
+        }
+
         setContentView(R.layout.activity_main);
+
+        particleView = findViewById(R.id.particleView);
         buildGrid();
+    }
+
+    /** Forward every touch to ParticleView (so particles repel, but views still get events). */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (particleView != null) {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_MOVE:
+                    particleView.setPointerPosition(ev.getX(), ev.getY());
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    particleView.clearPointer();
+                    break;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     private void buildGrid() {
@@ -76,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             final int index = i;
             View card = LayoutInflater.from(this).inflate(R.layout.item_menu_card, grid, false);
 
-            // Icon container — colored rounded square
+            // Coloured rounded square for icon
             FrameLayout iconContainer = card.findViewById(R.id.iconContainer);
             GradientDrawable iconBg = new GradientDrawable();
             iconBg.setColor(ICON_BG_COLORS[i]);
@@ -95,35 +129,34 @@ public class MainActivity extends AppCompatActivity {
             }
             ((TextView) card.findViewById(R.id.tvSublabel)).setText(SUBLABELS[i]);
 
-            // Glass background on card
+            // Glass background
             GradientDrawable cardBg = new GradientDrawable();
             cardBg.setColor(0x1AFFFFFF);
             cardBg.setStroke(dpToPx(1), 0x33FFFFFF);
             cardBg.setCornerRadius(dpToPx(16));
             card.setBackground(cardBg);
 
-            // Grid layout params — equal column weights
+            // Grid layout params
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.width       = 0;
-            params.height      = 0;
-            params.columnSpec  = GridLayout.spec(i % 2, 1, GridLayout.FILL, 1f);
-            params.rowSpec     = GridLayout.spec(i / 2, 1, GridLayout.FILL, 1f);
+            params.width      = 0;
+            params.height     = 0;
+            params.columnSpec = GridLayout.spec(i % 2, 1, GridLayout.FILL, 1f);
+            params.rowSpec    = GridLayout.spec(i / 2, 1, GridLayout.FILL, 1f);
             params.setMargins(
-                    i % 2 == 0 ? 0      : gap,
-                    i < 2      ? 0      : gap,
-                    i % 2 == 0 ? gap    : 0,
-                    0
-            );
+                    i % 2 == 0 ? 0   : gap,
+                    i < 2      ? 0   : gap,
+                    i % 2 == 0 ? gap : 0,
+                    0);
             card.setLayoutParams(params);
 
-            // Press scale animation
+            // Press scale
             card.setOnTouchListener((v, event) -> {
                 switch (event.getAction()) {
-                    case android.view.MotionEvent.ACTION_DOWN:
+                    case MotionEvent.ACTION_DOWN:
                         v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
                         break;
-                    case android.view.MotionEvent.ACTION_UP:
-                    case android.view.MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
                         v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
                         break;
                 }
@@ -141,16 +174,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
-        ParticleView pv = findViewById(R.id.particleView);
-        if (pv != null) pv.startAnimation();
+        if (particleView != null) particleView.resume();
     }
 
-    @Override protected void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
-        ParticleView pv = findViewById(R.id.particleView);
-        if (pv != null) pv.stopAnimation();
+        if (particleView != null) particleView.pause();
     }
 
     private int dpToPx(int dp) {

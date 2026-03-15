@@ -1,20 +1,24 @@
 package com.example.manualapp.ui.list;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.view.WindowCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,15 +32,13 @@ import java.util.List;
 
 public class ShowItemsActivity extends AppCompatActivity {
 
-    // Static topic subtitles — shown as the second line under each file name
-    // These are mapped by section; extra items default to "PDF hujjat"
     private static final String[][] SUBTITLES = {
-            // MARUZA (16 items)
+            // MARUZA (16)
             {"Pedagogikaga kirish","Ta'lim tarixi","Xalqaro taqqoslama","Zamonaviy yondashuvlar",
              "Pedagogika tizimlari","Jahon tajribasi","O'qitish metodlari","Baholash tizimi",
              "Yevropadagi ta'lim","AQSh ta'lim tizimi","Osiyo modellari","Maktabgacha ta'lim",
              "Oliy ta'lim","Kasbiy ta'lim","Maxsus ta'lim","Kelajak istiqboli"},
-            // AMALIYOT (20 items)
+            // AMALIYOT (20)
             {"Amaliy topshiriq","Amaliy topshiriq","Amaliy topshiriq","Amaliy topshiriq",
              "Amaliy topshiriq","Amaliy topshiriq","Amaliy topshiriq","Amaliy topshiriq",
              "Amaliy topshiriq","Amaliy topshiriq","Mavzu bo'yicha","Mavzu bo'yicha",
@@ -56,18 +58,30 @@ public class ShowItemsActivity extends AppCompatActivity {
             {"Mualliflar haqida","Mualliflar haqida"},
     };
 
-    private ContentType contentType;
-    private FileAdapter adapter;
-    private final List<FileItem> allItems  = new ArrayList<>();
-    private final List<FileItem> shown     = new ArrayList<>();
+    private ParticleView particleView;
+    private ContentType  contentType;
+    private FileAdapter  adapter;
+    private final List<FileItem> allItems = new ArrayList<>();
+    private final List<FileItem> shown    = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
-        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(Color.parseColor("#071535"));
+        window.setNavigationBarColor(Color.parseColor("#071535"));
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setBackgroundDrawable(
+                    new ColorDrawable(Color.parseColor("#0D2560")));
+        }
+
         setContentView(R.layout.activity_show_items);
+
+        particleView = findViewById(R.id.particleView);
 
         contentType = (ContentType) getIntent().getSerializableExtra(ContentType.KEY);
         if (contentType == null) { finish(); return; }
@@ -84,29 +98,43 @@ public class ShowItemsActivity extends AppCompatActivity {
         String[] subtitleSet = SUBTITLES[contentType.ordinal()];
         List<String> names = contentType.getItemNames();
         for (int i = 0; i < names.size(); i++) {
-            String subtitle = (i < subtitleSet.length) ? subtitleSet[i] : "PDF hujjat";
-            allItems.add(new FileItem(names.get(i), subtitle, contentType.getPdfPath(i)));
+            String sub = (i < subtitleSet.length) ? subtitleSet[i] : "PDF hujjat";
+            allItems.add(new FileItem(names.get(i), sub, contentType.getPdfPath(i)));
         }
         shown.addAll(allItems);
 
-        // RecyclerView
         RecyclerView rv = findViewById(R.id.recyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new FileAdapter(shown, this::openPdf);
         rv.setAdapter(adapter);
 
-        // Search filter
         ((EditText) findViewById(R.id.etSearch)).addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) { filter(s.toString()); }
             @Override public void afterTextChanged(Editable s) {}
         });
 
-        // FAB — currently just shows a toast (per spec, could show dialog)
         findViewById(R.id.fabAdd).setOnClickListener(v ->
                 android.widget.Toast.makeText(this,
-                        "Bu bo'limga fayllar assets'dan yuklanadi", android.widget.Toast.LENGTH_SHORT).show()
-        );
+                        "Bu bo'limga fayllar assets'dan yuklanadi",
+                        android.widget.Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (particleView != null) {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_MOVE:
+                    particleView.setPointerPosition(ev.getX(), ev.getY());
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    particleView.clearPointer();
+                    break;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     private void filter(String query) {
@@ -132,19 +160,19 @@ public class ShowItemsActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
-        ParticleView pv = findViewById(R.id.particleView);
-        if (pv != null) pv.startAnimation();
+        if (particleView != null) particleView.resume();
     }
 
-    @Override protected void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
-        ParticleView pv = findViewById(R.id.particleView);
-        if (pv != null) pv.stopAnimation();
+        if (particleView != null) particleView.pause();
     }
 
-    // ── Data model ────────────────────────────────────────────────────────────
+    // ── Data model ─────────────────────────────────────────────────────────────
     static class FileItem {
         final String name, subtitle, assetPath;
         FileItem(String name, String subtitle, String assetPath) {
@@ -152,17 +180,16 @@ public class ShowItemsActivity extends AppCompatActivity {
         }
     }
 
-    // ── Adapter ───────────────────────────────────────────────────────────────
     interface OnItemClick { void onClick(FileItem item); }
 
+    // ── Adapter ────────────────────────────────────────────────────────────────
     static class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
         private final List<FileItem> items;
         private final OnItemClick    listener;
 
         FileAdapter(List<FileItem> items, OnItemClick listener) {
-            this.items    = items;
-            this.listener = listener;
+            this.items = items; this.listener = listener;
         }
 
         @NonNull @Override
@@ -179,14 +206,15 @@ public class ShowItemsActivity extends AppCompatActivity {
             holder.tvSubtitle.setText(item.subtitle);
             holder.itemView.setOnClickListener(v -> listener.onClick(item));
 
-            // Staggered entry animation (slide up + fade in)
+            // Slide in from right with stagger
+            holder.itemView.setTranslationX(200f);
             holder.itemView.setAlpha(0f);
-            holder.itemView.setTranslationY(40f);
             holder.itemView.animate()
+                    .translationX(0f)
                     .alpha(1f)
-                    .translationY(0f)
-                    .setStartDelay(position * 50L)
-                    .setDuration(280)
+                    .setDuration(300)
+                    .setStartDelay(position * 40L)
+                    .setInterpolator(new DecelerateInterpolator())
                     .start();
         }
 

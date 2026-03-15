@@ -13,26 +13,37 @@
         android:theme="@style/Theme.ManualApp"
         tools:targetApi="31">
 
+        <!-- ── Splash (LAUNCHER) ── -->
         <activity
-            android:name=".ui.pdf.PDFActivityReading"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.list.ShowItemsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".MainActivity"
+            android:name=".ui.splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize">
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- ── Main home grid ── -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- ── Section file list ── -->
+        <activity
+            android:name=".ui.list.ShowItemsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- ── PDF viewer ── -->
+        <activity
+            android:name=".ui.pdf.PDFActivityReading"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

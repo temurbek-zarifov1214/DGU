@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Particle background — first child so it's behind everything -->
+    <com.example.manualapp.ui.particle.ParticleView
+        android:id="@+id/splashParticleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Logo + ring canvas overlay -->
+    <com.example.manualapp.ui.splash.SplashRingView
+        android:id="@+id/splashRingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent" />
+
+    <!-- Centred content -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@android:color/transparent">
+
+        <ImageView
+            android:id="@+id/splashIcon"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:background="@drawable/ic_launcher_background"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
+            android:alpha="0"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/splashTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Komparativistik Pedagogika"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:letterSpacing="0.03"
+            android:alpha="0" />
+
+        <TextView
+            android:id="@+id/splashSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="O\u02BBquv mobil ilovasi"
+            android:textColor="#A0FFFFFF"
+            android:textSize="13sp"
+            android:gravity="center"
+            android:alpha="0" />
+
+        <ProgressBar
+            android:id="@+id/splashProgress"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="28dp"
+            android:indeterminate="true"
+            android:indeterminateTint="#FFFFFFFF"
+            android:alpha="0" />
+
+    </LinearLayout>
+
+</FrameLayout>

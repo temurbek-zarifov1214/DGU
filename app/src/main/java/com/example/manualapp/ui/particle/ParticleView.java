@@ -4,63 +4,93 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RadialGradient;
+import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.Typeface;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
+import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Random;
 
+/**
+ * Full-screen animated particle background.
+ *
+ * Rules:
+ *  - All Paint objects pre-allocated (no allocations in onDraw).
+ *  - Symbol paths pre-computed once in initPaths().
+ *  - Choreographer drives the 60fps loop.
+ *  - onTouchEvent returns FALSE; caller must call setPointerPosition().
+ *  - pause() / resume() control the loop from Activity lifecycle.
+ */
 public class ParticleView extends View {
 
-    // ── Config matching super prompt spec ───────────────────────────────────────
-    private static final int   PARTICLE_COUNT   = 55;
-    private static final float CONNECTION_DIST  = 120f;  // px (scaled by density in onSizeChanged)
-    private static final float REPEL_RADIUS     = 140f;
-    private static final float REPEL_FORCE      = 2.2f;
-    private static final int   SYMBOL_COUNT     = 10;
-    private static final String[] SYMBOLS       = {"✦","◆","○","□","△","✧","◇"};
-
-    // Particle colour palette (RGB)
-    private static final int[][] PARTICLE_COLORS = {
-            {30, 100, 220}, {60, 130, 255}, {100, 60, 200},
-            {20, 180, 180}, {80, 160, 255}, {140, 80, 220}, {20, 120, 200}
+    // ── Constants ────────────────────────────────────────────────────────────────
+    private static final int   PARTICLE_COUNT = 55;
+    private static final int   FLOATER_COUNT  = 10;
+    private static final int[] PARTICLE_COLORS = {
+            0xFF1E64DC, 0xFF3C82FF, 0xFF6428C8,
+            0xFF14B4B4, 0xFF50A0FF, 0xFF8C50DC, 0xFF1478C8
     };
 
-    // ── Data ────────────────────────────────────────────────────────────────────
-    private float[] px, py, pvx, pvy, pRadius, pAlpha, pPulse, pPulseSpeed;
-    private int[][] pColor;
+    // ── Inner data classes ───────────────────────────────────────────────────────
+    private static final class Particle {
+        float x, y, vx, vy;
+        float baseRadius;   // dp units, converted on init
+        int   color;
+        float alpha;
+        float pulsePhase, pulseSpeed;
+    }
 
-    private float[] sx, sy, svy, sSize, sAlpha, sRotation, sRotSpeed;
-    private String[] sSymbol;
+    private static final class Floater {
+        float x, y;
+        float vy;           // upward speed (negative)
+        float rotation, rotSpeed;
+        float sizePx;       // pre-converted to pixels
+        float alpha;
+        int   type;         // 0-9 symbol type
+    }
 
-    // ── Touch ────────────────────────────────────────────────────────────────────
-    private float touchX = -1f, touchY = -1f;
-    private float targetX = -1f, targetY = -1f;
+    // ── Particles & floaters ─────────────────────────────────────────────────────
+    private final Particle[] particles = new Particle[PARTICLE_COUNT];
+    private final Floater[]  floaters  = new Floater[FLOATER_COUNT];
 
-    // ── Paint ────────────────────────────────────────────────────────────────────
-    private final Paint paint     = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    // ── Pre-computed symbol paths (unit space: fits -1..1) ───────────────────────
+    // Atom needs 3 rotated paths; others are single paths.
+    private final Path[] symbolPath   = new Path[10];  // one per symbol type
+    private final Path   atomEllipse  = new Path();    // single ellipse, rotated at draw time
 
-    // ── Background gradient (set once on size change) ───────────────────────────
+    // ── Pre-allocated Paint objects ──────────────────────────────────────────────
+    private final Paint bgPaint      = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint orbPaint     = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint glowPaint    = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint linePaint    = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint particlePaint= new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint haloPaint    = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint floaterPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Matrix floaterMatrix = new Matrix();  // reused each frame
+
+    // ── Background gradient (rebuilt on size change) ─────────────────────────────
     private LinearGradient bgGradient;
 
-    // ── Scale-adjusted radii ────────────────────────────────────────────────────
-    private float connDist, repelRadius;
+    // ── Pointer smoothing ────────────────────────────────────────────────────────
+    private float touchX, touchY;
+    private float smoothTouchX, smoothTouchY;
 
-    // ── Handler animation loop ───────────────────────────────────────────────────
+    // ── Density ──────────────────────────────────────────────────────────────────
+    private float density;
+
+    // ── Choreographer loop ────────────────────────────────────────────────────────
     private boolean running = false;
-    private final Handler handler = new Handler(Looper.getMainLooper());
-    private final Runnable ticker = new Runnable() {
-        @Override public void run() {
-            update();
+    private final Choreographer.FrameCallback frameCallback = frameTimeNanos -> {
+        if (running) {
+            updateFrame();
             invalidate();
-            if (running) handler.postDelayed(this, 16L);
+            Choreographer.getInstance().postFrameCallback(this.frameCallback);
         }
     };
 
@@ -68,138 +98,342 @@ public class ParticleView extends View {
     private boolean initialized = false;
 
     // ── Constructors ─────────────────────────────────────────────────────────────
-    public ParticleView(Context context) { super(context); initPaint(); }
-    public ParticleView(Context context, AttributeSet a) { super(context, a); initPaint(); }
-    public ParticleView(Context context, AttributeSet a, int s) { super(context, a, s); initPaint(); }
-
-    private void initPaint() {
-        textPaint.setTypeface(Typeface.DEFAULT);
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        setLayerType(LAYER_TYPE_SOFTWARE, null);
-        isClickable();
+    public ParticleView(Context context) {
+        super(context); setup();
+    }
+    public ParticleView(Context context, AttributeSet attrs) {
+        super(context, attrs); setup();
+    }
+    public ParticleView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle); setup();
     }
 
-    // ── Size / init ──────────────────────────────────────────────────────────────
+    private void setup() {
+        setWillNotDraw(false);
+        density = getResources().getDisplayMetrics().density;
+
+        // Configure pre-allocated paints
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setStrokeWidth(0.5f * density);
+        linePaint.setStrokeCap(Paint.Cap.ROUND);
+
+        floaterPaint.setStyle(Paint.Style.STROKE);
+        floaterPaint.setStrokeWidth(1.5f * density);
+        floaterPaint.setStrokeCap(Paint.Cap.ROUND);
+        floaterPaint.setStrokeJoin(Paint.Join.ROUND);
+
+        initPaths();
+    }
+
+    // ── Path initialization (called once) ─────────────────────────────────────────
+    private void initPaths() {
+
+        // 0 ── Open Book ──────────────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            // Left page
+            p.moveTo(-0.85f, -0.65f);
+            p.lineTo(-0.05f, -0.55f);
+            p.lineTo(-0.05f,  0.75f);
+            p.lineTo(-0.85f,  0.65f);
+            p.close();
+            // Right page
+            p.moveTo( 0.05f, -0.55f);
+            p.lineTo( 0.85f, -0.65f);
+            p.lineTo( 0.85f,  0.65f);
+            p.lineTo( 0.05f,  0.75f);
+            p.close();
+            // Page lines left
+            p.moveTo(-0.65f,  0.0f); p.lineTo(-0.10f,  0.05f);
+            p.moveTo(-0.65f,  0.3f); p.lineTo(-0.10f,  0.35f);
+            // Page lines right
+            p.moveTo( 0.10f,  0.05f); p.lineTo( 0.65f,  0.0f);
+            p.moveTo( 0.10f,  0.35f); p.lineTo( 0.65f,  0.3f);
+            symbolPath[0] = p;
+        }
+
+        // 1 ── Graduation Cap ─────────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            // Diamond top
+            p.moveTo( 0.00f, -0.90f);
+            p.lineTo( 0.80f, -0.25f);
+            p.lineTo( 0.00f,  0.05f);
+            p.lineTo(-0.80f, -0.25f);
+            p.close();
+            // Head cylinder (small rectangle below diamond)
+            p.addRect(-0.18f, 0.05f, 0.18f, 0.55f, Path.Direction.CW);
+            // Tassel cord + bob
+            p.moveTo( 0.80f, -0.25f);
+            p.lineTo( 0.80f,  0.20f);
+            p.lineTo( 0.62f,  0.42f);
+            p.addCircle(0.62f, 0.48f, 0.09f, Path.Direction.CW);
+            symbolPath[1] = p;
+        }
+
+        // 2 ── Pencil ──────────────────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            // Body
+            p.addRect(-0.22f, -0.70f, 0.22f, 0.45f, Path.Direction.CW);
+            // Tip
+            p.moveTo(-0.22f, 0.45f);
+            p.lineTo( 0.22f, 0.45f);
+            p.lineTo( 0.00f, 0.90f);
+            p.close();
+            // Eraser band
+            p.moveTo(-0.22f, -0.55f);
+            p.lineTo( 0.22f, -0.55f);
+            // Lead line
+            p.moveTo(-0.07f, 0.55f);
+            p.lineTo( 0.07f, 0.80f);
+            symbolPath[2] = p;
+        }
+
+        // 3 ── Five-pointed Star ───────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            for (int i = 0; i < 10; i++) {
+                double angle = Math.PI * i / 5.0 - Math.PI / 2.0;
+                float  r     = (i % 2 == 0) ? 0.90f : 0.38f;
+                float  x     = (float)(r * Math.cos(angle));
+                float  y     = (float)(r * Math.sin(angle));
+                if (i == 0) p.moveTo(x, y); else p.lineTo(x, y);
+            }
+            p.close();
+            symbolPath[3] = p;
+        }
+
+        // 4 ── Atom Ring ───────────────────────────────────────────────────────────
+        // Store a single unit ellipse; rotate canvas 0°/60°/120° at draw time.
+        {
+            atomEllipse.addOval(new RectF(-0.90f, -0.28f, 0.90f, 0.28f), Path.Direction.CW);
+            // Centre nucleus
+            atomEllipse.addCircle(0, 0, 0.14f, Path.Direction.CW);
+            // symbolPath[4] not used for atom — handled specially in drawFloater()
+            symbolPath[4] = null;
+        }
+
+        // 5 ── Diploma Scroll ──────────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            p.addRect(-0.65f, -0.38f, 0.65f, 0.38f, Path.Direction.CW);
+            p.addOval(new RectF(-0.82f, -0.38f, -0.48f, 0.38f), Path.Direction.CW);
+            p.addOval(new RectF( 0.48f, -0.38f,  0.82f, 0.38f), Path.Direction.CW);
+            p.moveTo(-0.40f,  0.00f); p.lineTo(0.40f,  0.00f);
+            p.moveTo(-0.30f, -0.14f); p.lineTo(0.30f, -0.14f);
+            p.moveTo(-0.30f,  0.14f); p.lineTo(0.30f,  0.14f);
+            symbolPath[5] = p;
+        }
+
+        // 6 ── Magnifying Glass ────────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            p.addCircle(-0.18f, -0.18f, 0.52f, Path.Direction.CW);
+            p.moveTo( 0.27f,  0.27f);
+            p.lineTo( 0.82f,  0.82f);
+            // Handle crossbar
+            p.moveTo( 0.58f,  0.68f);
+            p.lineTo( 0.78f,  0.50f);
+            symbolPath[6] = p;
+        }
+
+        // 7 ── Light Bulb ─────────────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            p.addArc(new RectF(-0.45f, -0.85f, 0.45f, 0.25f), 180f, -180f);
+            p.lineTo( 0.32f, 0.25f);
+            p.lineTo( 0.32f, 0.62f);
+            p.lineTo(-0.32f, 0.62f);
+            p.lineTo(-0.32f, 0.25f);
+            p.close();
+            // Filament lines
+            p.moveTo(-0.20f, 0.36f); p.lineTo(0.20f, 0.36f);
+            p.moveTo(-0.20f, 0.50f); p.lineTo(0.20f, 0.50f);
+            symbolPath[7] = p;
+        }
+
+        // 8 ── Globe ──────────────────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            p.addCircle(0, 0, 0.82f, Path.Direction.CW);
+            // Latitude lines as ovals
+            p.addOval(new RectF(-0.82f, -0.24f, 0.82f, 0.24f), Path.Direction.CW);
+            p.addOval(new RectF(-0.60f, -0.60f, 0.60f, -0.06f), Path.Direction.CW);
+            p.addOval(new RectF(-0.60f,  0.06f, 0.60f,  0.60f), Path.Direction.CW);
+            // Vertical centre meridian
+            p.moveTo(0, -0.82f); p.lineTo(0, 0.82f);
+            symbolPath[8] = p;
+        }
+
+        // 9 ── Chess King ──────────────────────────────────────────────────────────
+        {
+            Path p = new Path();
+            // Cross: vertical bar
+            p.addRect(-0.07f, -0.90f,  0.07f, -0.40f, Path.Direction.CW);
+            // Cross: horizontal bar
+            p.addRect(-0.26f, -0.74f,  0.26f, -0.56f, Path.Direction.CW);
+            // Body trapezoid
+            p.moveTo(-0.35f, -0.40f);
+            p.lineTo( 0.35f, -0.40f);
+            p.lineTo( 0.52f,  0.72f);
+            p.lineTo(-0.52f,  0.72f);
+            p.close();
+            // Base
+            p.moveTo(-0.58f, 0.72f); p.lineTo(0.58f, 0.72f);
+            symbolPath[9] = p;
+        }
+    }
+
+    // ── Size change — re-init particles ──────────────────────────────────────────
     @Override
     protected void onSizeChanged(int w, int h, int ow, int oh) {
         super.onSizeChanged(w, h, ow, oh);
         if (w == 0 || h == 0) return;
 
-        float density = getResources().getDisplayMetrics().density;
-        connDist    = CONNECTION_DIST * density;
-        repelRadius = REPEL_RADIUS    * density;
-
-        touchX  = w / 2f;  touchY  = h / 2f;
-        targetX = w / 2f;  targetY = h / 2f;
-
         bgGradient = new LinearGradient(0, 0, w, h,
-                new int[]{0xFF071535, 0xFF0D2560, 0xFF081840},
-                new float[]{0f, 0.5f, 1f},
+                new int[]{ 0xFF071535, 0xFF0D2560, 0xFF081840 },
+                new float[]{ 0f, 0.5f, 1f },
                 Shader.TileMode.CLAMP);
+
+        touchX = smoothTouchX = w / 2f;
+        touchY = smoothTouchY = h / 2f;
 
         initParticles(w, h);
         initFloaters(w, h);
         initialized = true;
-        startLoop();
+        resume();
     }
 
     private void initParticles(int w, int h) {
-        px          = new float[PARTICLE_COUNT];
-        py          = new float[PARTICLE_COUNT];
-        pvx         = new float[PARTICLE_COUNT];
-        pvy         = new float[PARTICLE_COUNT];
-        pRadius     = new float[PARTICLE_COUNT];
-        pAlpha      = new float[PARTICLE_COUNT];
-        pPulse      = new float[PARTICLE_COUNT];
-        pPulseSpeed = new float[PARTICLE_COUNT];
-        pColor      = new int[PARTICLE_COUNT][];
-
         for (int i = 0; i < PARTICLE_COUNT; i++) {
-            px[i]          = rng.nextFloat() * w;
-            py[i]          = rng.nextFloat() * h;
-            pvx[i]         = (rng.nextFloat() - 0.5f) * 0.7f;
-            pvy[i]         = (rng.nextFloat() - 0.5f) * 0.7f;
-            pRadius[i]     = 2f + rng.nextFloat() * 5f;
-            pAlpha[i]      = 0.15f + rng.nextFloat() * 0.5f;
-            pPulse[i]      = rng.nextFloat() * (float)(Math.PI * 2);
-            pPulseSpeed[i] = 0.02f + rng.nextFloat() * 0.04f;
-            pColor[i]      = PARTICLE_COLORS[i % PARTICLE_COLORS.length];
+            Particle p = new Particle();
+            p.x          = rng.nextFloat() * w;
+            p.y          = rng.nextFloat() * h;
+            p.vx         = (rng.nextFloat() - 0.5f) * 0.8f;
+            p.vy         = (rng.nextFloat() - 0.5f) * 0.8f;
+            p.baseRadius = (3f + rng.nextFloat() * 5f) * density;
+            p.color      = PARTICLE_COLORS[i % PARTICLE_COLORS.length];
+            p.alpha      = 0.15f + rng.nextFloat() * 0.50f;
+            p.pulsePhase = rng.nextFloat() * (float)(2 * Math.PI);
+            p.pulseSpeed = 0.015f + rng.nextFloat() * 0.020f;
+            particles[i] = p;
         }
     }
 
     private void initFloaters(int w, int h) {
-        sx        = new float[SYMBOL_COUNT];
-        sy        = new float[SYMBOL_COUNT];
-        svy       = new float[SYMBOL_COUNT];
-        sSize     = new float[SYMBOL_COUNT];
-        sAlpha    = new float[SYMBOL_COUNT];
-        sRotation = new float[SYMBOL_COUNT];
-        sRotSpeed = new float[SYMBOL_COUNT];
-        sSymbol   = new String[SYMBOL_COUNT];
-
-        for (int i = 0; i < SYMBOL_COUNT; i++) {
-            sx[i]        = rng.nextFloat() * w;
-            sy[i]        = h + rng.nextFloat() * 120f;
-            svy[i]       = -(0.6f + rng.nextFloat() * 1f);
-            sSize[i]     = 16f + rng.nextFloat() * 20f;
-            sAlpha[i]    = 0.1f + rng.nextFloat() * 0.25f;
-            sRotation[i] = rng.nextFloat() * 360f;
-            sRotSpeed[i] = (rng.nextFloat() - 0.5f) * 1.2f;
-            sSymbol[i]   = SYMBOLS[i % SYMBOLS.length];
+        for (int i = 0; i < FLOATER_COUNT; i++) {
+            Floater f = new Floater();
+            f.x        = rng.nextFloat() * w;
+            f.y        = h * rng.nextFloat();
+            f.vy       = -(0.6f + rng.nextFloat() * 0.8f);
+            f.rotation = rng.nextFloat() * 360f;
+            f.rotSpeed = (rng.nextFloat() - 0.5f) * 0.016f;
+            f.sizePx   = (18f + rng.nextFloat() * 18f) * density;
+            f.alpha    = 0.08f + rng.nextFloat() * 0.14f;
+            f.type     = i % 10;
+            floaters[i] = f;
         }
     }
 
-    // ── Loop ────────────────────────────────────────────────────────────────────
-    public void startLoop() {
-        if (!running) { running = true; handler.post(ticker); }
+    // ── Lifecycle ─────────────────────────────────────────────────────────────────
+    public void resume() {
+        if (!running) {
+            running = true;
+            Choreographer.getInstance().postFrameCallback(frameCallback);
+        }
     }
 
-    public void stopLoop() {
-        running = false; handler.removeCallbacks(ticker);
+    public void pause() {
+        running = false;
+        Choreographer.getInstance().removeFrameCallback(frameCallback);
     }
 
-    @Override protected void onAttachedToWindow() { super.onAttachedToWindow(); if (initialized) startLoop(); }
-    @Override protected void onDetachedFromWindow() { super.onDetachedFromWindow(); stopLoop(); }
+    // Keep backward-compat aliases
+    public void startAnimation() { resume(); }
+    public void stopAnimation()  { pause();  }
 
-    // Keep these as public aliases for Activity lifecycle
-    public void startAnimation() { startLoop(); }
-    public void stopAnimation()  { stopLoop();  }
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (initialized) resume();
+    }
 
-    // ── Update ───────────────────────────────────────────────────────────────────
-    private void update() {
-        if (!initialized) return;
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        pause();
+    }
+
+    @Override
+    protected void onVisibilityChanged(View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility == VISIBLE) { if (initialized) resume(); }
+        else pause();
+    }
+
+    // ── Touch — returns false; caller uses setPointerPosition() ─────────────────
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return false;   // don't consume; Activity dispatches via setPointerPosition
+    }
+
+    /** Called by the host Activity's dispatchTouchEvent to forward pointer position. */
+    public void setPointerPosition(float x, float y) {
+        touchX = x;
+        touchY = y;
+    }
+
+    /** Called when finger lifts — recentre smoothly to middle. */
+    public void clearPointer() {
+        touchX = getWidth()  / 2f;
+        touchY = getHeight() / 2f;
+    }
+
+    // ── Frame update ──────────────────────────────────────────────────────────────
+    private void updateFrame() {
         int w = getWidth(), h = getHeight();
         if (w == 0 || h == 0) return;
 
-        // Smooth pointer follow
-        touchX += (targetX - touchX) * 0.06f;
-        touchY += (targetY - touchY) * 0.06f;
+        // Smooth pointer interpolation
+        smoothTouchX += (touchX - smoothTouchX) * 0.06f;
+        smoothTouchY += (touchY - smoothTouchY) * 0.06f;
 
-        for (int i = 0; i < PARTICLE_COUNT; i++) {
-            float dx = px[i] - touchX;
-            float dy = py[i] - touchY;
-            float d  = (float) Math.sqrt(dx * dx + dy * dy);
-            if (d < repelRadius && d > 0) {
-                float force = (repelRadius - d) / repelRadius * REPEL_FORCE;
-                pvx[i] += (dx / d) * force;
-                pvy[i] += (dy / d) * force;
+        float repelRadius = 100f * density;
+
+        for (Particle p : particles) {
+            // Pulse
+            p.pulsePhase += p.pulseSpeed;
+
+            // Touch repulsion
+            float dx   = p.x - smoothTouchX;
+            float dy   = p.y - smoothTouchY;
+            float dist = (float) Math.sqrt(dx * dx + dy * dy);
+            if (dist < repelRadius && dist > 0.1f) {
+                float force = (repelRadius - dist) / repelRadius * 1.2f;
+                p.vx += (dx / dist) * force;
+                p.vy += (dy / dist) * force;
             }
-            pvx[i] *= 0.97f;
-            pvy[i] *= 0.97f;
-            px[i]  += pvx[i];
-            py[i]  += pvy[i];
-            pPulse[i] += pPulseSpeed[i];
 
-            if (px[i] < 0) px[i] = w; if (px[i] > w) px[i] = 0;
-            if (py[i] < 0) py[i] = h; if (py[i] > h) py[i] = 0;
+            // Damping + move
+            p.vx *= 0.97f;
+            p.vy *= 0.97f;
+            p.x  += p.vx;
+            p.y  += p.vy;
+
+            // Edge wrap
+            if (p.x < 0)  p.x = w;
+            if (p.x > w)  p.x = 0;
+            if (p.y < 0)  p.y = h;
+            if (p.y > h)  p.y = 0;
         }
 
-        for (int i = 0; i < SYMBOL_COUNT; i++) {
-            sy[i]        += svy[i];
-            sRotation[i] += sRotSpeed[i];
-            if (sy[i] < -30f) {
-                sy[i] = h + 20f;
-                sx[i] = rng.nextFloat() * w;
+        for (Floater f : floaters) {
+            f.y        += f.vy;
+            f.rotation += f.rotSpeed;
+            if (f.y < -50 * density) {
+                f.y = h + rng.nextFloat() * 80 * density;
+                f.x = rng.nextFloat() * w;
             }
         }
     }
@@ -210,93 +444,104 @@ public class ParticleView extends View {
         if (!initialized) return;
         float w = getWidth(), h = getHeight();
 
-        // 1. Background gradient
-        paint.setShader(bgGradient);
-        paint.setAlpha(255);
-        canvas.drawRect(0, 0, w, h, paint);
-        paint.setShader(null);
+        // ── LAYER 1: Background gradient ──────────────────────────────────────────
+        bgPaint.setShader(bgGradient);
+        canvas.drawRect(0, 0, w, h, bgPaint);
+        bgPaint.setShader(null);
 
-        // 2. Touch glow
-        if (touchX > 0) {
-            paint.setShader(new RadialGradient(touchX, touchY, 240f,
-                    new int[]{Color.argb(46, 80, 140, 255), Color.TRANSPARENT},
-                    new float[]{0f, 1f}, Shader.TileMode.CLAMP));
-            paint.setAlpha(255);
-            canvas.drawRect(0, 0, w, h, paint);
-            paint.setShader(null);
-        }
+        // ── LAYER 2: Touch glow ───────────────────────────────────────────────────
+        float glowR = 200f * density;
+        orbPaint.setShader(new RadialGradient(
+                smoothTouchX, smoothTouchY, glowR,
+                new int[]{ Color.argb(51, 80, 140, 255), Color.TRANSPARENT },
+                new float[]{ 0f, 1f },
+                Shader.TileMode.CLAMP));
+        canvas.drawRect(0, 0, w, h, orbPaint);
+        orbPaint.setShader(null);
 
-        // 3. Ambient orbs
-        drawAmbientOrb(canvas, w * 0.2f, h * 0.2f, 180f, Color.argb(33, 30, 80, 200));
-        drawAmbientOrb(canvas, w * 0.8f, h * 0.7f, 160f, Color.argb(26, 80, 30, 180));
-        drawAmbientOrb(canvas, w * 0.5f, h * 0.5f, 120f, Color.argb(20, 0, 120, 200));
+        // ── LAYER 3: Ambient orbs ─────────────────────────────────────────────────
+        drawOrb(canvas, w * 0.15f, h * 0.20f, w * 0.35f, Color.argb(33, 30,  80, 200));
+        drawOrb(canvas, w * 0.85f, h * 0.70f, w * 0.30f, Color.argb(26, 80,  30, 180));
+        drawOrb(canvas, w * 0.50f, h * 0.50f, w * 0.25f, Color.argb(20,  0, 120, 200));
 
-        // 4. Connection lines
-        paint.setStrokeWidth(0.8f);
-        paint.setStyle(Paint.Style.STROKE);
+        // ── LAYER 4: Connection lines ─────────────────────────────────────────────
+        float connR = 80f * density;
         for (int i = 0; i < PARTICLE_COUNT; i++) {
             for (int j = i + 1; j < PARTICLE_COUNT; j++) {
-                float dx = px[i] - px[j];
-                float dy = py[i] - py[j];
+                float dx = particles[i].x - particles[j].x;
+                float dy = particles[i].y - particles[j].y;
                 float d  = (float) Math.sqrt(dx * dx + dy * dy);
-                if (d < connDist) {
-                    int[] c = pColor[i];
-                    int a = (int) ((1f - d / connDist) * 46f);
-                    paint.setColor(Color.argb(a, c[0], c[1], c[2]));
-                    canvas.drawLine(px[i], py[i], px[j], py[j], paint);
+                if (d < connR) {
+                    int baseColor = particles[i].color;
+                    int a = (int)((1f - d / connR) * 45);
+                    linePaint.setColor(Color.argb(a,
+                            Color.red(baseColor), Color.green(baseColor), Color.blue(baseColor)));
+                    canvas.drawLine(particles[i].x, particles[i].y,
+                                    particles[j].x, particles[j].y, linePaint);
                 }
             }
         }
-        paint.setStyle(Paint.Style.FILL);
 
-        // 5. Particles + glow halo
-        for (int i = 0; i < PARTICLE_COUNT; i++) {
-            float pulse = (float)(Math.sin(pPulse[i]) * 0.3 + 0.7);
-            int[] c = pColor[i];
+        // ── LAYERS 5 + 6: Halos + solid particles ────────────────────────────────
+        for (Particle p : particles) {
+            float pulse = (float)(Math.sin(p.pulsePhase) * 0.3 + 0.7);
+            int   r     = Color.red(p.color);
+            int   g     = Color.green(p.color);
+            int   b     = Color.blue(p.color);
 
-            // Halo
-            paint.setShader(new RadialGradient(px[i], py[i], pRadius[i] * 8f,
-                    new int[]{Color.argb((int)(pAlpha[i] * 0.3f * pulse * 255), c[0], c[1], c[2]), Color.TRANSPARENT},
-                    new float[]{0f, 1f}, Shader.TileMode.CLAMP));
-            canvas.drawCircle(px[i], py[i], pRadius[i] * 8f, paint);
-            paint.setShader(null);
+            // Glow halo
+            float haloR = p.baseRadius * 5f * pulse;
+            haloPaint.setShader(new RadialGradient(p.x, p.y, Math.max(haloR, 1f),
+                    new int[]{ Color.argb((int)(p.alpha * 0.35f * pulse * 255), r, g, b), Color.TRANSPARENT },
+                    new float[]{ 0f, 1f },
+                    Shader.TileMode.CLAMP));
+            canvas.drawCircle(p.x, p.y, haloR, haloPaint);
+            haloPaint.setShader(null);
 
-            // Core
-            paint.setColor(Color.argb((int)(pAlpha[i] * pulse * 255), c[0], c[1], c[2]));
-            canvas.drawCircle(px[i], py[i], Math.max(pRadius[i] * pulse, 0.5f), paint);
+            // Solid core
+            particlePaint.setColor(Color.argb((int)(p.alpha * pulse * 255), r, g, b));
+            canvas.drawCircle(p.x, p.y, Math.max(p.baseRadius * pulse, 0.5f), particlePaint);
         }
 
-        // 6. Floating symbols
-        for (int i = 0; i < SYMBOL_COUNT; i++) {
-            canvas.save();
-            canvas.translate(sx[i], sy[i]);
-            canvas.rotate(sRotation[i]);
-            textPaint.setTextSize(sSize[i]);
-            textPaint.setColor(Color.argb((int)(sAlpha[i] * 255), 150, 190, 255));
-            canvas.drawText(sSymbol[i], 0, sSize[i] / 2f, textPaint);
-            canvas.restore();
+        // ── LAYER 7: Floating education symbols ───────────────────────────────────
+        for (Floater f : floaters) {
+            drawFloater(canvas, f);
         }
     }
 
-    private void drawAmbientOrb(Canvas canvas, float cx, float cy, float r, int color) {
-        paint.setShader(new RadialGradient(cx, cy, r,
-                new int[]{color, Color.TRANSPARENT},
-                new float[]{0f, 1f}, Shader.TileMode.CLAMP));
-        canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
-        paint.setShader(null);
+    // ── Helpers ───────────────────────────────────────────────────────────────────
+
+    private void drawOrb(Canvas canvas, float cx, float cy, float r, int color) {
+        orbPaint.setShader(new RadialGradient(cx, cy, r,
+                new int[]{ color, Color.TRANSPARENT },
+                new float[]{ 0f, 1f },
+                Shader.TileMode.CLAMP));
+        canvas.drawRect(0, 0, getWidth(), getHeight(), orbPaint);
+        orbPaint.setShader(null);
     }
 
-    // ── Touch ────────────────────────────────────────────────────────────────────
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
-                targetX = event.getX(); targetY = event.getY(); break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                targetX = getWidth() / 2f; targetY = getHeight() / 2f; break;
+    private void drawFloater(Canvas canvas, Floater f) {
+        int alpha = (int)(f.alpha * 255);
+        floaterPaint.setColor(Color.argb(alpha, 180, 210, 255));
+
+        canvas.save();
+        canvas.translate(f.x, f.y);
+        canvas.rotate(f.rotation);
+        float s = f.sizePx / 2f;    // unit-path uses -1..1, so scale = half-size
+
+        if (f.type == 4) {
+            // Atom: draw the pre-computed ellipse at 3 rotations
+            canvas.scale(s, s);
+            canvas.drawPath(atomEllipse, floaterPaint);
+            canvas.rotate(60f);
+            canvas.drawPath(atomEllipse, floaterPaint);
+            canvas.rotate(60f);
+            canvas.drawPath(atomEllipse, floaterPaint);
+        } else if (symbolPath[f.type] != null) {
+            canvas.scale(s, s);
+            canvas.drawPath(symbolPath[f.type], floaterPaint);
         }
-        return true;
+
+        canvas.restore();
     }
 }
