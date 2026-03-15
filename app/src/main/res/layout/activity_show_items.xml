@@ -1,100 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_main_dark_blue"
-    tools:context=".ui.list.ShowItemsActivity">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/movingBackground"
+    <!-- Particle background -->
+    <com.example.manualapp.ui.particle.ParticleView
+        android:id="@+id/particleView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/movingElement"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_gravity="left|center_vertical"
-            android:alpha="0.28"
-            android:contentDescription="@null"
-            app:srcCompat="@drawable/ic_moving_education" />
-    </FrameLayout>
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent">
-
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:background="@drawable/bg_header_hero"
-            app:collapsedTitleTextColor="@color/white"
-            app:contentScrim="@color/dark_blue_primary"
-            app:expandedTitleTextColor="@color/transparent"
-            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="Maruzadan matni"
-            app:titleCollapseMode="scale">
-
-            <TextView
-                android:id="@+id/imageForList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:paddingHorizontal="28dp"
-                android:shadowColor="#CC000000"
-                android:shadowDx="0"
-                android:shadowDy="2"
-                android:shadowRadius="5"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.02" />
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbarList"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/Theme.AppCompat.Light" />
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <!-- Content -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_main_dark_blue"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        android:orientation="vertical"
+        android:paddingTop="36dp">
 
+        <!-- ── Navbar ── -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="20dp"
-            android:paddingBottom="28dp">
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:gravity="center_vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycle"
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="#FFFFFF"
+                android:background="@drawable/ripple_glass_circle"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="0dp"
-                android:paddingBottom="80dp"
-                android:clipToPadding="false" />
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="40dp"
+                android:maxLines="1"
+                android:ellipsize="end" />
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
 
+        <!-- ── Search bar ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_search_bar"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_search"
+                android:tint="#66FFFFFF"
+                android:layout_marginEnd="8dp" />
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="Qidirish..."
+                android:textColorHint="#66FFFFFF"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:background="@null"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <!-- ── File list ── -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="90dp"
+            android:clipToPadding="false" />
+    </LinearLayout>
+
+    <!-- ── Orange FAB ── -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddFile"
+        android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:contentDescription="@string/add_file"
-        app:srcCompat="@drawable/ic_add"
-        app:backgroundTint="@color/dark_blue_primary"
-        app:tint="@color/white" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_add"
+        android:tint="#FFFFFF"
+        android:contentDescription="Add"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:backgroundTint="#FFB300"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
+        app:fabSize="normal" />
+
+    <!-- ── Bottom nav bar ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_gravity="bottom"
+        android:background="#CC071535"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="3dp"
+                android:background="@drawable/bg_nav_dot_active"
+                android:layout_marginBottom="3dp" />
+
+            <TextView
+                android:id="@+id/tvNavLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ro'yxat"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

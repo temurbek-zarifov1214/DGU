@@ -1,92 +1,96 @@
 package com.example.manualapp.ui.pdf;
 
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.WindowCompat;
 
 import com.example.manualapp.R;
-import com.example.manualapp.domain.ContentType;
-import com.example.manualapp.util.MovingBackgroundHelper;
+import com.example.manualapp.ui.particle.ParticleView;
 import com.github.barteksc.pdfviewer.PDFView;
-
-import java.io.File;
+import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
+import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 
 public class PDFActivityReading extends AppCompatActivity {
 
+    private int currentPage = 0;
+    private int totalPages  = 1;
     private PDFView pdfView;
-    private TextView chapterNameView;
+    private TextView tvPageInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
         setContentView(R.layout.activity_pdfreading);
 
-        MovingBackgroundHelper.startMovingBackground(this, findViewById(R.id.movingBackground));
+        String assetPath = getIntent().getStringExtra("assetPath");
+        String fileName  = getIntent().getStringExtra("fileName");
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-        Toolbar toolbar = findViewById(R.id.toolbar2);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.baseline_menu_open_24);
-            getSupportActionBar().setTitle("");
-        }
+        // Display name in navbar
+        String displayName = (fileName != null) ? fileName : "PDF";
+        // Remove extension for display
+        int dotIdx = displayName.lastIndexOf('.');
+        if (dotIdx > 0) displayName = displayName.substring(0, dotIdx);
+        ((TextView) findViewById(R.id.tvTitle)).setText(displayName + ".pdf");
 
-        pdfView = findViewById(R.id.pdfView);
-        chapterNameView = findViewById(R.id.chapterNames);
-
-        String customFilePath = getIntent().getStringExtra("customFilePath");
-        if (customFilePath != null && !customFilePath.isEmpty()) {
-            String name = getIntent().getStringExtra("name");
-            chapterNameView.setText(name != null ? name : "");
-            File file = new File(customFilePath);
-            if (file.exists()) {
-                pdfView.fromFile(file).load();
-            } else {
-                Toast.makeText(this, R.string.file_not_found, Toast.LENGTH_SHORT).show();
-                finish();
-            }
-            return;
-        }
-
-        ContentType contentType = (ContentType) getIntent().getSerializableExtra(ContentType.KEY);
-        if (contentType != null) {
-            int position = getIntent().getIntExtra("position", 0);
-            String name = getIntent().getStringExtra("name");
-            chapterNameView.setText(name != null ? name : "");
-            loadPdfFromAsset(contentType.getPdfPath(position));
-        } else {
-            String pdfFileName = getIntent().getStringExtra("pdfFileName");
-            String chapterName = getIntent().getStringExtra("chapterName");
-            chapterNameView.setText(chapterName != null ? chapterName : "");
-            if (pdfFileName != null) {
-                loadPdfFromAsset(pdfFileName);
-            }
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+        // Back button
+        ((ImageButton) findViewById(R.id.btnBack)).setOnClickListener(v -> {
             finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
 
-    private void loadPdfFromAsset(String path) {
-        pdfView.fromAsset(path).load();
+        // Page info
+        tvPageInfo = findViewById(R.id.tvPageInfo);
+        tvPageInfo.setText("1 / ? bet");
+
+        // PDF viewer
+        pdfView = findViewById(R.id.pdfView);
+
+        if (assetPath != null) {
+            pdfView.fromAsset(assetPath)
+                    .enableSwipe(true)
+                    .swipeHorizontal(false)
+                    .enableDoubletap(true)
+                    .enableAnnotationRendering(false)
+                    .scrollHandle(new DefaultScrollHandle(this))
+                    .onPageChange((page, count) -> {
+                        currentPage = page + 1;
+                        totalPages  = count;
+                        tvPageInfo.setText(currentPage + " / " + totalPages + " bet");
+                    })
+                    .onError(t -> { /* silently ignore */ })
+                    .load();
+        }
+
+        // Prev / Next buttons
+        ((ImageButton) findViewById(R.id.btnPrev)).setOnClickListener(v -> {
+            if (currentPage > 1) pdfView.jumpTo(currentPage - 2, true);
+        });
+        ((ImageButton) findViewById(R.id.btnNext)).setOnClickListener(v -> {
+            if (currentPage < totalPages) pdfView.jumpTo(currentPage, true);
+        });
     }
 
     @Override
-    protected void onPause() {
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        ParticleView pv = findViewById(R.id.particleView);
+        if (pv != null) pv.startAnimation();
+    }
+
+    @Override protected void onPause() {
         super.onPause();
-        MovingBackgroundHelper.stopMovingBackground(this);
+        ParticleView pv = findViewById(R.id.particleView);
+        if (pv != null) pv.stopAnimation();
     }
 }

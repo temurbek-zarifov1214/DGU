@@ -9,11 +9,29 @@ public enum ContentType {
     MARUZA(
             "Maruzadan matni",
             "Maruzadan matnlari",
-            Arrays.asList("1-Maruza", "2-Maruza", "3-Maruza", "4-Maruza", "5-Maruza", "6-Maruza", "7-Maruza"),
+            buildMaruzaList(),
             new PdfPathStrategy() {
+                private final String[] paths = {
+                        "maruza/1-ma'ruza.pdf",
+                        "maruza/2-mavzu.pdf",
+                        "maruza/3-ma'ruza.pdf",
+                        "maruza/4-ma'ruza.pdf",
+                        "maruza/5-ma'ruza.pdf",
+                        "maruza/6-ma'ruza.pdf",
+                        "maruza/7-ma'ruza.pdf",
+                        "maruza/8-ma'ruza.pdf",
+                        "maruza/9-ma'ruza.pdf",
+                        "maruza/10-ma'ruza.pdf",
+                        "maruza/11-ma'ruza.pdf",
+                        "maruza/12-ma'ruza.pdf",
+                        "maruza/13-ma'ruza.pdf",
+                        "maruza/14-ma'ruza.pdf",
+                        "maruza/15-ma'ruza.pdf",
+                        "maruza/16-ma'ruza.pdf"
+                };
                 @Override
                 public String getPath(int position) {
-                    return "maruza/maruza-" + (position + 1) + ".pdf";
+                    return position >= 0 && position < paths.length ? paths[position] : paths[0];
                 }
             }),
     AMALIYOT(
@@ -23,17 +41,21 @@ public enum ContentType {
             new PdfPathStrategy() {
                 @Override
                 public String getPath(int position) {
-                    return "amaliyot/amaliy-" + (position + 1) + ".pdf";
+                    if (position < 10) {
+                        return "amaliyot/" + (position + 1) + "-amaliy.pdf";
+                    } else {
+                        return "amaliyot/" + (position + 1) + "-mavzu.pdf";
+                    }
                 }
             }),
     TARQATMA(
-            "Tarqatma materiallar",
-            "Tarqatma materiallar",
-            Collections.singletonList("Tarqatma materiallar"),
+            "Fan dastur",
+            "Fan dastur",
+            Collections.singletonList("Fan dastur"),
             new PdfPathStrategy() {
                 @Override
                 public String getPath(int position) {
-                    return "labaratoriya/TARQATMA MATERIALLAR.pdf";
+                    return "Fan dastur/Fan dastur.PDF";
                 }
             }),
     GLOSSARY(
@@ -43,7 +65,7 @@ public enum ContentType {
             new PdfPathStrategy() {
                 @Override
                 public String getPath(int position) {
-                    return "qollamma/Glossary.pdf";
+                    return "Glossary/GLOSSARIY.pdf";
                 }
             }),
     ORALIQ(
@@ -53,7 +75,7 @@ public enum ContentType {
             new PdfPathStrategy() {
                 @Override
                 public String getPath(int position) {
-                    return "oraliqtest/Test savollari ON.pdf";
+                    return "oraliqtest/Oraliq test.pdf";
                 }
             }),
     YAKUNIY(
@@ -63,25 +85,25 @@ public enum ContentType {
             new PdfPathStrategy() {
                 @Override
                 public String getPath(int position) {
-                    return "yakuniytest/Test savollari YN.pdf";
+                    return "yakuniytest/Yakuniy nazorat uchun test 200 ta.pdf";
                 }
             }),
     DGU(
             "Mobil ilova hujjati",
             "Komparativistik pedagogika fanini o'gatuvchi",
-            Collections.singletonList("Komparativistik pedagogika fanini o'gatuvchi\" android mobil ilovasi"),
+            Collections.singletonList("Komparativistik pedagogika fanini o'gatuvchi android mobil ilovasi"),
             new PdfPathStrategy() {
                 @Override
                 public String getPath(int position) {
-                    return "dgu/DGU.pdf";
+                    return "dgu/Mobile ilova hujjati.pdf";
                 }
             }),
     MALUMOTNOMA(
             "Mualiflar haqida",
             "Dastur muallifi",
-            Arrays.asList("Sohibov Akram Rustamovich", "Salimova Marjona Abduraxim qizi"),
+            Arrays.asList("Sohibov Akram Rustamovich", "Nabiyeva"),
             new PdfPathStrategy() {
-                private final String[] paths = {"malumotnoma/Ma'lumotnoma Soxibov.PDF", "malumotnoma/obektivka Salimova.pdf"};
+                private final String[] paths = {"malumotnoma/Ma'lumotnoma Soxibov.PDF", "malumotnoma/Ma'lumotnoma Nabiyeva.pdf"};
                 @Override
                 public String getPath(int position) {
                     return position >= 0 && position < paths.length ? paths[position] : paths[0];
@@ -122,9 +144,17 @@ public enum ContentType {
         String getPath(int position);
     }
 
+    private static List<String> buildMaruzaList() {
+        List<String> list = new ArrayList<>(16);
+        for (int i = 1; i <= 16; i++) {
+            list.add(i + "-Maruza");
+        }
+        return list;
+    }
+
     private static List<String> buildAmaliyotList() {
-        List<String> list = new ArrayList<>(15);
-        for (int i = 1; i <= 15; i++) {
+        List<String> list = new ArrayList<>(20);
+        for (int i = 1; i <= 20; i++) {
             list.add("Amaliy mashg'ulot - " + i);
         }
         return list;

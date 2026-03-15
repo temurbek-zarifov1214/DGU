@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Glass menu card — centered icon on top, labels below -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="10dp"
+    android:background="@drawable/ripple_glass"
+    android:foreground="@drawable/ripple_glass"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Icon container (colored rounded square, centered) -->
+    <FrameLayout
+        android:id="@+id/iconContainer"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            android:tint="#FFFFFF" />
+    </FrameLayout>
+
+    <!-- Title (can be 1 or 2 lines) -->
+    <TextView
+        android:id="@+id/tvLabel1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#F0FFFFFF"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <TextView
+        android:id="@+id/tvLabel2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#F0FFFFFF"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <!-- Sublabel -->
+    <TextView
+        android:id="@+id/tvSublabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textColor="#66FFFFFF"
+        android:textSize="9sp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end" />
+</LinearLayout>
