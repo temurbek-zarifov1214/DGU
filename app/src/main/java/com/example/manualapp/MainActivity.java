@@ -1,133 +1,53 @@
 package com.example.manualapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 
-import com.example.manualapp.adabiyot.ShowItems5;
-import com.example.manualapp.amaliyot.ShowItems4;
-import com.example.manualapp.labaratoriya.ShowItems3;
-import com.example.manualapp.maruza.ShowItems;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.manualapp.domain.ContentType;
+import com.example.manualapp.ui.list.ShowItemsActivity;
+import com.example.manualapp.util.MovingBackgroundHelper;
 
 public class MainActivity extends AppCompatActivity {
-    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        maruza
-        ImageView imageView1 = findViewById(R.id.image1);
-        imageView1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String chapterName = "Maruzadan mavzular"; // Replace with the actual chapter name
-                navigateToOtherPageMaruza(chapterName);
-            }
-        });
-// amaliyot
-        ImageView imageView2 = findViewById(R.id.image3);
-        imageView2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String chapterName = "Chapter 1"; // Replace with the actual chapter name
-                navigateToOtherPageAmaliyot(chapterName);
-            }
-        });
-        // labarotaoriya
-        ImageView imageView3 = findViewById(R.id.image5);
-        imageView3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String chapterName = "Chapter 1"; // Replace with the actual chapter name
-                navigateToOtherPageLaboratoriya(chapterName);
-            }
-        });
-//        adabiyot
-        ImageView imageView4 = findViewById(R.id.image7);
-        imageView4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String chapterName = "Chapter 1"; // Replace with the actual chapter name
-                navigateToOtherPageAdabiyot3(chapterName);
-            }
-        });
-//        //Ishchi oquv dastur for ImageView image6
-//        imageView = findViewById(R.id.image6);
-//        imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openPdfActivity("Ishchi o’quv fan dastur .pdf", "Ishchi o'quv fan dasturi");
-//            }
-//        });
-//     Mustaqil talim for imageView  imageMus
-        imageView = findViewById(R.id.imageMus);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("Gidravlikamasalalar.pdf", "Gidravlik masalalar");
-            }
-        });
 
-        //     Tarqatma materiallar for imageView  imageTar
-        imageView = findViewById(R.id.imageTar);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("SILLABUSgidravlika.pdf", "SILLABUS");
-            }
-        });
+        View movingBg = findViewById(R.id.movingBackground);
+        View movingEl = movingBg != null ? movingBg.findViewById(R.id.movingElement) : null;
+        if (movingEl != null) movingEl.setAlpha(0.38f);
+        MovingBackgroundHelper.startMovingBackground(this, movingBg);
 
-        //     Test for imageView  imageTestQueiz
-        imageView = findViewById(R.id.imageTestQueiz);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("Gidravlik_savollar.pdf", "Gidravlik savollar");
-            }
-        });
-        //     Obyektivka for imageView  imageObyekt
-        imageView = findViewById(R.id.imageObyekt);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPdfActivity("obyektivka.pdf", "Dastur mualiflari");
-            }
-        });
-
+        bindCard(R.id.card1, ContentType.MARUZA);
+        bindCard(R.id.card2, ContentType.AMALIYOT);
+        bindCard(R.id.card3, ContentType.TARQATMA);
+        bindCard(R.id.card4, ContentType.GLOSSARY);
+        bindCard(R.id.card5, ContentType.ORALIQ);
+        bindCard(R.id.card6, ContentType.YAKUNIY);
+        bindCard(R.id.card7, ContentType.DGU);
+        bindCard(R.id.card8, ContentType.MALUMOTNOMA);
     }
 
-    private void openPdfActivity(String pdfFileName, String chapterName) {
-        Intent intent = new Intent(MainActivity.this, PDFActivityReading.class);
-        intent.putExtra("pdfFileName", pdfFileName);
-        intent.putExtra("chapterName", chapterName);
+    private void bindCard(int cardId, ContentType contentType) {
+        View card = findViewById(cardId);
+        card.setOnClickListener(v -> navigateTo(contentType));
+    }
+
+    private void navigateTo(ContentType contentType) {
+        Intent intent = new Intent(this, ShowItemsActivity.class);
+        intent.putExtra(ContentType.KEY, contentType);
         startActivity(intent);
     }
 
-    private void navigateToOtherPageMaruza(String chapterName) {
-        Intent intent = new Intent(MainActivity.this, ShowItems.class);
-        intent.putExtra("name", chapterName);
-        startActivity(intent);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MovingBackgroundHelper.stopMovingBackground(this);
     }
-    private void navigateToOtherPageLaboratoriya(String chapterName) {
-        Intent intent = new Intent(MainActivity.this, ShowItems3.class);
-        intent.putExtra("name", chapterName);
-        startActivity(intent);
-    }
-
-    private void navigateToOtherPageAmaliyot(String chapterName) {
-        Intent intent = new Intent(MainActivity.this, ShowItems4.class);
-        intent.putExtra("name", chapterName);
-        startActivity(intent);
-    }
-
-    private void navigateToOtherPageAdabiyot3(String chapterName) {
-        Intent intent = new Intent(MainActivity.this, ShowItems5.class);
-        intent.putExtra("name", chapterName);
-        startActivity(intent);
-    }
-
 }
