@@ -90,8 +90,8 @@ public enum ContentType {
             }),
     DGU(
             "Mobil ilova hujjati",
-            "Komparativistik pedagogika fanini o'gatuvchi",
-            Collections.singletonList("Komparativistik pedagogika fanini o'gatuvchi android mobil ilovasi"),
+            "Zamonaviy ta'lim texnologiyalar fani",
+            Collections.singletonList("Zamonaviy ta'lim texnologiyalari fani android mobil ilovasi"),
             new PdfPathStrategy() {
                 @Override
                 public String getPath(int position) {

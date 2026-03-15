@@ -110,12 +110,13 @@ public class MainActivity extends AppCompatActivity {
             final int index = i;
             View card = LayoutInflater.from(this).inflate(R.layout.item_menu_card, grid, false);
 
-            // Coloured rounded square for icon
+            // Coloured rounded square for icon (48dp container, 12dp radius)
             FrameLayout iconContainer = card.findViewById(R.id.iconContainer);
             GradientDrawable iconBg = new GradientDrawable();
             iconBg.setColor(ICON_BG_COLORS[i]);
             iconBg.setCornerRadius(dpToPx(12));
             iconContainer.setBackground(iconBg);
+            iconContainer.setClipToOutline(true);
 
             ((ImageView) card.findViewById(R.id.ivIcon)).setImageResource(ICONS[i]);
             ((TextView)  card.findViewById(R.id.tvLabel1)).setText(LABELS1[i]);

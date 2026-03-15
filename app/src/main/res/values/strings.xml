@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">Komparativistik pedagogika fani</string>
+    <string name="app_name">Zamonaviy ta\'lim texnologiyalar fani</string>
     <string name="file_not_found">Fayl topilmadi</string>
     <string name="add_file">PDF qo\'shish</string>
     <string name="file_added">Qo\'shildi: %1$s</string>
     <string name="select_pdf">PDF fayl tanlang</string>
     <string name="custom_item_name">Qo\'shilgan %1$d</string>
+    <string name="zamonaviy_ta_lim_texnologiyalari_fani">Zamonaviy ta\'lim texnologiyalar fani</string>
 </resources>
