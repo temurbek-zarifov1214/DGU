@@ -33,7 +33,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="#FFFFFF"
+                app:tint="#FFFFFF"
                 android:background="@drawable/ripple_glass_circle"
                 android:contentDescription="Back" />
 
@@ -94,7 +94,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="#B3FFFFFF"
+                app:tint="#B3FFFFFF"
                 android:background="@drawable/ripple_glass_circle"
                 android:contentDescription="Previous" />
 
@@ -113,7 +113,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_chevron_right"
-                android:tint="#B3FFFFFF"
+                app:tint="#B3FFFFFF"
                 android:background="@drawable/ripple_glass_circle"
                 android:contentDescription="Next" />
         </LinearLayout>

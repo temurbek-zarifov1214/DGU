@@ -41,7 +41,7 @@
                     android:layout_height="32dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_graduation"
-                    android:tint="#FFFFFF" />
+                    app:tint="#FFFFFF" />
             </androidx.cardview.widget.CardView>
 
             <TextView
