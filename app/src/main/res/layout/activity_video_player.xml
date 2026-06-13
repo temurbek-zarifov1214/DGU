@@ -12,11 +12,11 @@
         android:orientation="vertical"
         android:paddingTop="30dp">
 
-        <!-- Player 16:9 -->
+        <!-- Player 16:9 (height set at runtime to screen width * 9/16) -->
         <FrameLayout
             android:id="@+id/playerFrame"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="240dp"
             android:background="#000000">
 
             <WebView
@@ -30,17 +30,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <ImageView
+                    android:id="@+id/overlayThumb"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#55000000" />
+
                 <ImageButton
                     android:id="@+id/btnPlay"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     android:layout_gravity="center"
                     android:src="@drawable/nq_play"
                     app:tint="#FFFFFF"
-                    android:background="@drawable/bg_h_circle_btn"
+                    android:background="@drawable/bg_h_scrim_circle"
                     android:scaleType="centerInside"
-                    android:padding="14dp"
+                    android:padding="16dp"
                     android:contentDescription="Oʻynatish" />
+
+                <TextView
+                    android:id="@+id/btnOpenYoutube"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="12dp"
+                    android:text="↗  YouTube ilovasida ochish"
+                    android:fontFamily="@font/manrope"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:background="@drawable/bg_h_pill_dark"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp" />
             </FrameLayout>
 
             <LinearLayout
@@ -85,16 +114,17 @@
                     android:paddingEnd="20dp" />
             </LinearLayout>
 
+            <!-- Professional floating back button -->
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:layout_margin="6dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_margin="10dp"
                 android:src="@drawable/nq_back"
                 app:tint="#FFFFFF"
-                android:background="@drawable/bg_h_circle_btn"
+                android:background="@drawable/bg_h_scrim_circle"
                 android:scaleType="centerInside"
-                android:padding="8dp"
+                android:padding="10dp"
                 android:contentDescription="Orqaga" />
         </FrameLayout>
 
@@ -135,7 +165,6 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Tavsif collapsible -->
                 <LinearLayout
                     android:id="@+id/descHeader"
                     android:layout_width="match_parent"
@@ -167,102 +196,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:layout_marginBottom="80dp"
-                    android:text="Naqqoshlik darsining asoslari: chizish ketma-ketligi, kompozitsiya qoidalari va rang tanlash. Ushbu darsda asosiy elementlar bosqichma-bosqich koʻrsatiladi."
+                    android:layout_marginBottom="24dp"
+                    android:text="Tavsif yuklanmoqda…"
                     android:fontFamily="@font/manrope"
                     android:textColor="@color/h_text2"
                     android:textSize="13sp"
                     android:lineSpacingMultiplier="1.5" />
             </LinearLayout>
         </ScrollView>
-    </LinearLayout>
-
-    <!-- Download progress pill -->
-    <LinearLayout
-        android:id="@+id/dlPill"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="18dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@drawable/bg_h_pill_dark"
-        android:padding="12dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone">
-
-        <View
-            android:id="@+id/dlThumb"
-            android:layout_width="44dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="11dp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/dlTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/manrope"
-                    android:textStyle="bold"
-                    android:textColor="@color/h_text"
-                    android:textSize="12sp"
-                    android:maxLines="1"
-                    android:ellipsize="end" />
-
-                <TextView
-                    android:id="@+id/dlPct"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/manrope"
-                    android:textStyle="bold"
-                    android:textColor="@color/h_turq"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:layout_marginTop="7dp"
-                android:orientation="horizontal"
-                android:background="@color/h_border">
-
-                <View
-                    android:id="@+id/dlFill"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.01"
-                    android:background="@color/h_turq" />
-
-                <View
-                    android:id="@+id/dlRest"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.99" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/dlIcon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginStart="11dp"
-            android:src="@drawable/nq_download"
-            app:tint="@color/h_turq"
-            android:contentDescription="@null" />
     </LinearLayout>
 
 </FrameLayout>

@@ -19,6 +19,7 @@ public class VideoLesson implements Serializable {
     public String youtubeId;   // may be empty for bundled samples
     public String query;       // search fallback
     public String url;         // original pasted URL (used for playback)
+    public String description; // fetched from YouTube (oEmbed/watch page)
     public boolean saved;      // "yuklab olingan" (offline-marked)
     public boolean isNew;      // user-added
 
@@ -28,6 +29,14 @@ public class VideoLesson implements Serializable {
                        String duration, String youtubeId, String query) {
         this.id = id; this.title = title; this.topic = topic; this.colorHex = colorHex;
         this.duration = duration; this.youtubeId = youtubeId; this.query = query;
+    }
+
+    /** YouTube thumbnail URL (no API needed), or null when no video id is known. */
+    public String thumbUrl() {
+        if (youtubeId != null && !youtubeId.isEmpty()) {
+            return "https://img.youtube.com/vi/" + youtubeId + "/hqdefault.jpg";
+        }
+        return null;
     }
 
     public JSONObject toJson() throws JSONException {
@@ -40,6 +49,7 @@ public class VideoLesson implements Serializable {
         o.put("youtubeId", youtubeId == null ? "" : youtubeId);
         o.put("query", query == null ? "" : query);
         o.put("url", url == null ? "" : url);
+        o.put("description", description == null ? "" : description);
         o.put("saved", saved);
         o.put("isNew", isNew);
         return o;
@@ -55,6 +65,7 @@ public class VideoLesson implements Serializable {
         v.youtubeId = o.optString("youtubeId", "");
         v.query = o.optString("query", "");
         v.url = o.optString("url", "");
+        v.description = o.optString("description", "");
         v.saved = o.optBoolean("saved", false);
         v.isNew = o.optBoolean("isNew", false);
         return v;

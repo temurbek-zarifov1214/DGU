@@ -75,7 +75,6 @@ public class VideoListActivity extends AppCompatActivity {
         attachSwipe(rv);
 
         findViewById(R.id.tabAll).setOnClickListener(v -> switchTab("all"));
-        findViewById(R.id.tabSaved).setOnClickListener(v -> switchTab("dl"));
         findViewById(R.id.tabHistory).setOnClickListener(v -> switchTab("hist"));
 
         findViewById(R.id.fabAdd).setOnClickListener(v -> showAddSheet());
@@ -98,7 +97,6 @@ public class VideoListActivity extends AppCompatActivity {
 
     private void styleTabs() {
         styleTab(R.id.tabAll, R.id.tabAllIcon, R.id.tabAllLabel, "all".equals(tab));
-        styleTab(R.id.tabSaved, R.id.tabSavedIcon, R.id.tabSavedLabel, "dl".equals(tab));
         styleTab(R.id.tabHistory, R.id.tabHistoryIcon, R.id.tabHistoryLabel, "hist".equals(tab));
     }
 
@@ -110,8 +108,7 @@ public class VideoListActivity extends AppCompatActivity {
 
     private void rebuild() {
         List<VideoLesson> items;
-        if ("dl".equals(tab)) items = VideoRepository.getSaved(this);
-        else if ("hist".equals(tab)) items = VideoRepository.getHistory(this);
+        if ("hist".equals(tab)) items = VideoRepository.getHistory(this);
         else items = VideoRepository.getAll(this);
 
         rows.clear();
@@ -141,10 +138,7 @@ public class VideoListActivity extends AppCompatActivity {
     private void setEmptyText() {
         TextView title = findViewById(R.id.emptyTitle);
         TextView sub = findViewById(R.id.emptySub);
-        if ("dl".equals(tab)) {
-            title.setText("Hozircha saqlangan video yoʻq");
-            sub.setText("Videoni oflayn roʻyxatga belgilash uchun saqlang.");
-        } else if ("hist".equals(tab)) {
+        if ("hist".equals(tab)) {
             title.setText("Tarix boʻsh");
             sub.setText("Koʻrilgan videolar shu yerda chiqadi.");
         } else {
@@ -189,12 +183,19 @@ public class VideoListActivity extends AppCompatActivity {
         add.setOnClickListener(v -> {
             String url = et.getText().toString().trim();
             if (url.length() < 6) return;
-            VideoRepository.addFromUrl(this, url);
+            com.example.manualapp.domain.VideoLesson added = VideoRepository.addFromUrl(this, url);
             dialog.dismiss();
             tab = "all";
             styleTabs();
             rebuild();
             Toast.makeText(this, "Video roʻyxatga qoʻshildi", Toast.LENGTH_SHORT).show();
+            // Fetch the real YouTube title/description in the background, then refresh.
+            com.example.manualapp.data.YoutubeMeta.fetch(added, m -> {
+                if (m.any()) {
+                    VideoRepository.updateMeta(this, added.id, m.title, m.description);
+                    rebuild();
+                }
+            });
         });
 
         refresh.run();
@@ -210,7 +211,7 @@ public class VideoListActivity extends AppCompatActivity {
         return null;
     }
 
-    // ── Swipe to remove (saved tab → unsave; added video → delete) ──────────────
+    // ── Swipe left to delete an added video ─────────────────────────────────────
     private void attachSwipe(RecyclerView rv) {
         androidx.recyclerview.widget.ItemTouchHelper helper = new androidx.recyclerview.widget.ItemTouchHelper(
                 new androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(0,
@@ -220,17 +221,15 @@ public class VideoListActivity extends AppCompatActivity {
                     @Override public int getSwipeDirs(@NonNull RecyclerView r, @NonNull RecyclerView.ViewHolder vh) {
                         int pos = vh.getBindingAdapterPosition();
                         if (pos < 0 || pos >= rows.size() || !(rows.get(pos) instanceof VideoLesson)) return 0;
-                        VideoLesson v = (VideoLesson) rows.get(pos);
-                        boolean removable = "dl".equals(tab) || v.isNew;
-                        return removable ? androidx.recyclerview.widget.ItemTouchHelper.LEFT : 0;
+                        return ((VideoLesson) rows.get(pos)).isNew
+                                ? androidx.recyclerview.widget.ItemTouchHelper.LEFT : 0;
                     }
 
                     @Override public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int dir) {
                         int pos = vh.getBindingAdapterPosition();
                         if (pos < 0 || pos >= rows.size() || !(rows.get(pos) instanceof VideoLesson)) { rebuild(); return; }
                         VideoLesson v = (VideoLesson) rows.get(pos);
-                        if (v.isNew) VideoRepository.removeAdded(VideoListActivity.this, v.id);
-                        else VideoRepository.setSaved(VideoListActivity.this, v.id, false);
+                        VideoRepository.removeAdded(VideoListActivity.this, v.id);
                         rebuild();
                     }
                 });
@@ -289,23 +288,15 @@ public class VideoListActivity extends AppCompatActivity {
             vh.dur.setText(v.duration);
             vh.badgeNew.setVisibility(v.isNew ? View.VISIBLE : View.GONE);
 
+            // Coloured fallback behind the (async) YouTube thumbnail
             int color = parse(v.colorHex);
-            GradientDrawable thumb = new GradientDrawable(
+            GradientDrawable fallback = new GradientDrawable(
                     GradientDrawable.Orientation.TL_BR, new int[]{color, BG});
-            thumb.setCornerRadius(9 * density);
-            vh.thumb.setBackground(thumb);
+            vh.thumbImg.setBackground(fallback);
+            vh.thumbImg.setImageDrawable(null);
+            vh.thumbImg.setTag(null);
+            com.example.manualapp.data.ImageLoader.load(v.thumbUrl(), vh.thumbImg);
 
-            if (v.saved) {
-                vh.statusIcon.setImageResource(R.drawable.nq_check);
-                vh.statusIcon.setColorFilter(TURQ);
-                vh.status.setText("Yuklandi");
-                vh.status.setTextColor(TURQ);
-            } else {
-                vh.statusIcon.setImageResource(R.drawable.nq_download);
-                vh.statusIcon.setColorFilter(TEXT2);
-                vh.status.setText("Yuklab olish");
-                vh.status.setTextColor(TEXT2);
-            }
             vh.itemView.setOnClickListener(x -> openPlayer(v));
         }
 
@@ -322,18 +313,15 @@ public class VideoListActivity extends AppCompatActivity {
     }
 
     static class CardVH extends RecyclerView.ViewHolder {
-        final TextView title, topic, dur, status, badgeNew;
-        final ImageView statusIcon;
-        final View thumb;
+        final TextView title, topic, dur, badgeNew;
+        final ImageView thumbImg;
         CardVH(@NonNull View v) {
             super(v);
             title = v.findViewById(R.id.tvVideoTitle);
             topic = v.findViewById(R.id.tvVideoTopic);
             dur = v.findViewById(R.id.tvVideoDur);
-            status = v.findViewById(R.id.tvStatus);
             badgeNew = v.findViewById(R.id.tvBadgeNew);
-            statusIcon = v.findViewById(R.id.statusIcon);
-            thumb = v.findViewById(R.id.videoThumb);
+            thumbImg = v.findViewById(R.id.videoThumbImg);
         }
     }
 }

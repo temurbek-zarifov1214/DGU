@@ -86,24 +86,6 @@
             <Space android:layout_width="7dp" android:layout_height="1dp" />
 
             <LinearLayout
-                android:id="@+id/tabSaved"
-                android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/bg_h_tab_inactive">
-
-                <ImageView android:id="@+id/tabSavedIcon" android:layout_width="14dp" android:layout_height="14dp"
-                    android:src="@drawable/nq_check" app:tint="@color/h_text2" android:contentDescription="@null" />
-                <TextView android:id="@+id/tabSavedLabel" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp" android:text="Yuklangan" android:fontFamily="@font/manrope"
-                    android:textColor="@color/h_text2" android:textSize="12sp" />
-            </LinearLayout>
-
-            <Space android:layout_width="7dp" android:layout_height="1dp" />
-
-            <LinearLayout
                 android:id="@+id/tabHistory"
                 android:layout_width="0dp"
                 android:layout_height="36dp"

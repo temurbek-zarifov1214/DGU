@@ -1,14 +1,15 @@
 package com.example.manualapp.ui.video;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
@@ -16,42 +17,37 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.manualapp.R;
+import com.example.manualapp.data.ImageLoader;
 import com.example.manualapp.data.VideoRepository;
+import com.example.manualapp.data.YoutubeMeta;
 import com.example.manualapp.domain.VideoLesson;
 
 import java.net.URLEncoder;
 
 /**
- * Video lesson screen — a 16:9 in-app YouTube player on top, then title, a
- * collapsible "Tavsif", and a download/offline pill at the bottom.
- *
- * Playback embeds the YouTube IFrame via loadDataWithBaseURL with an https base
- * origin, which avoids the "Error 153 / configuration" the bare /embed/ URL
- * produces in a WebView. YouTube's fullscreen button is supported via a custom
- * WebChromeClient.
+ * Online video lesson screen — a 16:9 in-app YouTube player on top, then the
+ * real title, channel, and description fetched from YouTube. Online-only; no
+ * download. Embedding-disabled videos open via the "YouTube ilovasida ochish"
+ * button.
  */
 public class VideoPlayerActivity extends AppCompatActivity {
 
     public static final String EXTRA_VIDEO = "video";
 
-    private static final int TURQ  = Color.parseColor("#3EC6C0");
-    private static final int TEXT2 = Color.parseColor("#9AA5B8");
+    private static final int TURQ = Color.parseColor("#3EC6C0");
     private static final int BG    = Color.parseColor("#0E1626");
 
     private VideoLesson video;
     private WebView web;
     private FrameLayout root;
     private boolean descOpen = true;
-    private boolean downloading = false;
-    private float density;
+    private boolean fellBack = false;   // guards the embed→watch-page fallback
 
     private View customView;
     private WebChromeClient.CustomViewCallback customCallback;
@@ -63,24 +59,32 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(BG);
+        window.setStatusBarColor(Color.BLACK);
         window.setNavigationBarColor(BG);
 
         setContentView(R.layout.activity_video_player);
-        density = getResources().getDisplayMetrics().density;
 
         video = (VideoLesson) getIntent().getSerializableExtra(EXTRA_VIDEO);
         if (video == null) { finish(); return; }
 
         root = findViewById(R.id.playerRoot);
-        int color = parse(video.colorHex);
 
-        // Thumbnail behind play button
-        findViewById(R.id.playerOverlay).setBackground(
-                new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{color, BG}));
+        // Size the player to a real 16:9 of the screen width (big, like YouTube)
+        FrameLayout playerFrame = findViewById(R.id.playerFrame);
+        int screenW = getResources().getDisplayMetrics().widthPixels;
+        ViewGroup.LayoutParams lp = playerFrame.getLayoutParams();
+        lp.height = Math.round(screenW * 9f / 16f);
+        playerFrame.setLayoutParams(lp);
 
-        ((TextView) findViewById(R.id.tvVideoTitle)).setText(video.title);
-        ((TextView) findViewById(R.id.tvMeta)).setText(video.topic);
+        // Thumbnail behind the play button
+        ImageLoader.load(video.thumbUrl(), findViewById(R.id.overlayThumb));
+
+        TextView titleView = findViewById(R.id.tvVideoTitle);
+        TextView metaView  = findViewById(R.id.tvMeta);
+        TextView descView  = findViewById(R.id.tvDesc);
+        titleView.setText(video.title);
+        metaView.setText(video.topic);
+        if (video.description != null && !video.description.isEmpty()) descView.setText(video.description);
 
         web = findViewById(R.id.playerWeb);
         WebSettings s = web.getSettings();
@@ -89,110 +93,108 @@ public class VideoPlayerActivity extends AppCompatActivity {
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setLoadWithOverviewMode(true);
         s.setUseWideViewPort(true);
+        // Chrome-mobile UA so the watch-page fallback serves a playable page.
+        s.setUserAgentString("Mozilla/5.0 (Linux; Android 12; Pixel 5) AppleWebKit/537.36 "
+                + "(KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36");
         web.setWebViewClient(new WebViewClient());
         web.setWebChromeClient(new FullscreenChrome());
+        // JS calls this when the IFrame player errors (e.g. 101/150 = embedding
+        // disabled) → fall back to the real watch page, which still plays.
+        web.addJavascriptInterface(new Object() {
+            @android.webkit.JavascriptInterface
+            public void onError(int code) { runOnUiThread(() -> fallbackToWatch()); }
+        }, "AndroidVP");
 
         findViewById(R.id.btnBack).setOnClickListener(v -> onBackPressed());
         findViewById(R.id.btnPlay).setOnClickListener(v -> play());
+        findViewById(R.id.btnOpenYoutube).setOnClickListener(v -> openExternal());
         findViewById(R.id.btnRetry).setOnClickListener(v -> {
             findViewById(R.id.offlineOverlay).setVisibility(View.GONE);
             play();
         });
         findViewById(R.id.descHeader).setOnClickListener(v -> toggleDesc());
 
-        // Download pill (also the save control)
-        GradientDrawable dlThumb = new GradientDrawable(
-                GradientDrawable.Orientation.TL_BR, new int[]{color, BG});
-        dlThumb.setCornerRadius(7 * density);
-        findViewById(R.id.dlThumb).setBackground(dlThumb);
-        ((TextView) findViewById(R.id.dlTitle)).setText(video.title);
-        findViewById(R.id.dlPill).setVisibility(View.VISIBLE);
-        findViewById(R.id.dlPill).setOnClickListener(v -> { if (!video.saved) startDownload(); });
-        refreshPill();
+        // Fetch real YouTube title / channel / description
+        YoutubeMeta.fetch(video, m -> {
+            if (m.title != null) { video.title = m.title; titleView.setText(m.title); }
+            if (m.author != null) metaView.setText(m.author);
+            if (m.description != null) { video.description = m.description; descView.setText(m.description); }
+            if (m.any()) VideoRepository.updateMeta(this, video.id, m.title, m.description);
+        });
     }
 
-    // ── Playback ────────────────────────────────────────────────────────────────
+    // ── Playback (clean 16:9 IFrame embed, auto-fallback to watch page) ─────────
     private void play() {
-        if (!isOnline() && !video.saved) {
+        if (!isOnline()) {
             findViewById(R.id.offlineOverlay).setVisibility(View.VISIBLE);
             return;
         }
+        fellBack = false;
         findViewById(R.id.offlineOverlay).setVisibility(View.GONE);
         findViewById(R.id.playerOverlay).setVisibility(View.GONE);
         web.setVisibility(View.VISIBLE);
-        web.loadUrl(playUrl());
-    }
 
-    /**
-     * Real YouTube watch page (not the IFrame embed) — embed-disabled videos
-     * ("Error 150/152") still play here, and at full width the player fills the
-     * 16:9 frame. This is literally "watch on YouTube".
-     */
-    private String playUrl() {
         if (video.youtubeId != null && !video.youtubeId.isEmpty()) {
-            return "https://m.youtube.com/watch?v=" + video.youtubeId;
+            web.loadDataWithBaseURL("https://www.youtube.com", iframeHtml(video.youtubeId),
+                    "text/html", "utf-8", null);
+        } else if (video.url != null && !video.url.isEmpty()) {
+            web.loadUrl(video.url);
+        } else {
+            String q = (video.query != null && !video.query.isEmpty()) ? video.query : video.title;
+            try { q = URLEncoder.encode(q, "UTF-8"); } catch (Exception ignored) {}
+            web.loadUrl("https://m.youtube.com/results?search_query=" + q);
         }
-        if (video.url != null && !video.url.isEmpty()) {
-            return video.url;
-        }
-        String q = (video.query != null && !video.query.isEmpty()) ? video.query : video.title;
-        try { q = URLEncoder.encode(q, "UTF-8"); } catch (Exception ignored) {}
-        return "https://m.youtube.com/results?search_query=" + q;
     }
 
-    // ── Tavsif ──────────────────────────────────────────────────────────────────
+    /** Embed failed (embedding disabled) → load the real watch page, which plays. */
+    private void fallbackToWatch() {
+        if (fellBack || web == null) return;
+        fellBack = true;
+        if (video.youtubeId != null && !video.youtubeId.isEmpty()) {
+            web.loadUrl("https://m.youtube.com/watch?v=" + video.youtubeId);
+        } else if (video.url != null && !video.url.isEmpty()) {
+            web.loadUrl(video.url);
+        }
+    }
+
+    /** IFrame Player API page — reports errors (101/150 = embed disabled) to Android. */
+    private String iframeHtml(String id) {
+        return "<!DOCTYPE html><html><head>"
+                + "<meta name='viewport' content='width=device-width, initial-scale=1'>"
+                + "<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}"
+                + "#p{width:100%;height:100%}</style></head><body><div id='p'></div>"
+                + "<script>var t=document.createElement('script');"
+                + "t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);"
+                + "var player;function onYouTubeIframeAPIReady(){player=new YT.Player('p',{"
+                + "videoId:'" + id + "',width:'100%',height:'100%',"
+                + "playerVars:{playsinline:1,rel:0,autoplay:1,fs:1,modestbranding:1},"
+                + "events:{onError:function(e){if(window.AndroidVP)AndroidVP.onError(e.data);}}});}"
+                + "</script></body></html>";
+    }
+
+    /** Open the video in the external YouTube app / browser — guaranteed playback. */
+    private void openExternal() {
+        String url;
+        if (video.youtubeId != null && !video.youtubeId.isEmpty()) {
+            url = "https://www.youtube.com/watch?v=" + video.youtubeId;
+        } else if (video.url != null && !video.url.isEmpty()) {
+            url = video.url;
+        } else {
+            String q = (video.query != null && !video.query.isEmpty()) ? video.query : video.title;
+            try { q = URLEncoder.encode(q, "UTF-8"); } catch (Exception ignored) {}
+            url = "https://m.youtube.com/results?search_query=" + q;
+        }
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        } catch (Exception e) {
+            Toast.makeText(this, "YouTube ilovasi topilmadi", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void toggleDesc() {
         descOpen = !descOpen;
         findViewById(R.id.tvDesc).setVisibility(descOpen ? View.VISIBLE : View.GONE);
         findViewById(R.id.descChevron).setRotation(descOpen ? 0f : 180f);
-    }
-
-    // ── Download pill (offline save) ────────────────────────────────────────────
-    private void startDownload() {
-        if (downloading || video.saved) return;
-        downloading = true;
-        View fill = findViewById(R.id.dlFill);
-        View rest = findViewById(R.id.dlRest);
-        TextView pct = findViewById(R.id.dlPct);
-
-        ValueAnimator anim = ValueAnimator.ofFloat(0f, 1f);
-        anim.setDuration(2200);
-        anim.addUpdateListener(a -> {
-            float f = Math.max(0.01f, (float) a.getAnimatedValue());
-            ((LinearLayout.LayoutParams) fill.getLayoutParams()).weight = f;
-            ((LinearLayout.LayoutParams) rest.getLayoutParams()).weight = 1f - f;
-            fill.requestLayout();
-            pct.setText((int) (f * 100) + "%");
-        });
-        anim.addListener(new android.animation.AnimatorListenerAdapter() {
-            @Override public void onAnimationEnd(android.animation.Animator a) {
-                downloading = false;
-                video.saved = true;
-                VideoRepository.setSaved(VideoPlayerActivity.this, video.id, true);
-                refreshPill();
-                Toast.makeText(VideoPlayerActivity.this, "Video saqlandi (oflayn)", Toast.LENGTH_SHORT).show();
-            }
-        });
-        anim.start();
-    }
-
-    private void refreshPill() {
-        View fill = findViewById(R.id.dlFill);
-        View rest = findViewById(R.id.dlRest);
-        TextView pct = findViewById(R.id.dlPct);
-        ImageView icon = findViewById(R.id.dlIcon);
-        if (video.saved) {
-            pct.setText("Saqlandi");
-            icon.setImageResource(R.drawable.nq_check);
-            ((LinearLayout.LayoutParams) fill.getLayoutParams()).weight = 1f;
-            ((LinearLayout.LayoutParams) rest.getLayoutParams()).weight = 0f;
-        } else {
-            pct.setText("Yuklab olish");
-            icon.setImageResource(R.drawable.nq_download);
-            ((LinearLayout.LayoutParams) fill.getLayoutParams()).weight = 0.01f;
-            ((LinearLayout.LayoutParams) rest.getLayoutParams()).weight = 0.99f;
-        }
-        fill.requestLayout();
     }
 
     private boolean isOnline() {
@@ -200,10 +202,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
         if (cm == null) return false;
         NetworkInfo info = cm.getActiveNetworkInfo();
         return info != null && info.isConnected();
-    }
-
-    private static int parse(String hex) {
-        try { return Color.parseColor(hex); } catch (Exception e) { return TURQ; }
     }
 
     // ── Fullscreen (YouTube fullscreen button) ──────────────────────────────────

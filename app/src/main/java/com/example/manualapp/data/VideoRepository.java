@@ -105,6 +105,19 @@ public final class VideoRepository {
         if (changed) writeAdded(c, added);
     }
 
+    /** Persist a YouTube-fetched title/description onto a user-added video. */
+    public static void updateMeta(Context c, String id, String title, String description) {
+        List<VideoLesson> added = readAdded(c);
+        boolean changed = false;
+        for (VideoLesson v : added) {
+            if (v.id.equals(id)) {
+                if (title != null && !title.isEmpty()) { v.title = title; changed = true; }
+                if (description != null && !description.isEmpty()) { v.description = description; changed = true; }
+            }
+        }
+        if (changed) writeAdded(c, added);
+    }
+
     public static void removeAdded(Context c, String id) {
         List<VideoLesson> added = readAdded(c);
         for (int i = added.size() - 1; i >= 0; i--) if (added.get(i).id.equals(id)) added.remove(i);
