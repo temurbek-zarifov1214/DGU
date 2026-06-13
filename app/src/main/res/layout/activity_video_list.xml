@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/h_bg">
+
+    <com.example.manualapp.ui.particle.ParticleView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:domeSize="300dp"
+        app:cxFraction="0.95"
+        app:cyFraction="0.02"
+        app:domeOpacity="0.4" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="40dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="16dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/nq_back"
+                app:tint="@color/h_text"
+                android:background="@drawable/bg_h_circle_btn"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:contentDescription="Orqaga" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Video darslar"
+                android:fontFamily="@font/lora"
+                android:textStyle="bold"
+                android:textColor="@color/h_text"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <com.example.manualapp.ui.widget.GirihDividerView
+            android:layout_width="match_parent"
+            android:layout_height="14dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="6dp" />
+
+        <!-- Tab bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="6dp">
+
+            <LinearLayout
+                android:id="@+id/tabAll"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@drawable/bg_h_tab_active">
+
+                <ImageView android:id="@+id/tabAllIcon" android:layout_width="14dp" android:layout_height="14dp"
+                    android:src="@drawable/nq_grid" app:tint="@color/h_bg" android:contentDescription="@null" />
+                <TextView android:id="@+id/tabAllLabel" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp" android:text="Barchasi" android:fontFamily="@font/manrope"
+                    android:textStyle="bold" android:textColor="@color/h_bg" android:textSize="12sp" />
+            </LinearLayout>
+
+            <Space android:layout_width="7dp" android:layout_height="1dp" />
+
+            <LinearLayout
+                android:id="@+id/tabSaved"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@drawable/bg_h_tab_inactive">
+
+                <ImageView android:id="@+id/tabSavedIcon" android:layout_width="14dp" android:layout_height="14dp"
+                    android:src="@drawable/nq_check" app:tint="@color/h_text2" android:contentDescription="@null" />
+                <TextView android:id="@+id/tabSavedLabel" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp" android:text="Yuklangan" android:fontFamily="@font/manrope"
+                    android:textColor="@color/h_text2" android:textSize="12sp" />
+            </LinearLayout>
+
+            <Space android:layout_width="7dp" android:layout_height="1dp" />
+
+            <LinearLayout
+                android:id="@+id/tabHistory"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@drawable/bg_h_tab_inactive">
+
+                <ImageView android:id="@+id/tabHistoryIcon" android:layout_width="14dp" android:layout_height="14dp"
+                    android:src="@drawable/nq_history" app:tint="@color/h_text2" android:contentDescription="@null" />
+                <TextView android:id="@+id/tabHistoryLabel" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp" android:text="Tarix" android:fontFamily="@font/manrope"
+                    android:textColor="@color/h_text2" android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="170dp"
+                android:scrollbars="none"
+                android:clipToPadding="false" />
+
+            <!-- Empty state -->
+            <LinearLayout
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:paddingBottom="120dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/nq_uslublar"
+                    app:tint="@color/h_turq"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/emptyTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Hozircha video yoʻq"
+                    android:fontFamily="@font/lora"
+                    android:textStyle="bold"
+                    android:textColor="@color/h_text"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/emptySub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="YouTube havolasini qoʻshish uchun + tugmasini bosing."
+                    android:fontFamily="@font/manrope"
+                    android:textColor="@color/h_text2"
+                    android:textSize="13sp"
+                    android:gravity="center" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- FAB add link (above nav) -->
+    <ImageButton
+        android:id="@+id/fabAdd"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="92dp"
+        android:src="@drawable/nq_plus"
+        app:tint="@color/h_bg"
+        android:background="@drawable/bg_h_fab"
+        android:scaleType="centerInside"
+        android:padding="15dp"
+        android:elevation="6dp"
+        android:contentDescription="Video havola qoʻshish" />
+
+    <include layout="@layout/view_floating_nav" />
+
+</FrameLayout>

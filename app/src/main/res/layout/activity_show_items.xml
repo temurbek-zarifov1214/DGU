@@ -2,146 +2,172 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/h_bg">
 
-    <!-- Particle background -->
     <com.example.manualapp.ui.particle.ParticleView
-        android:id="@+id/particleView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:domeSize="320dp"
+        app:cxFraction="0.95"
+        app:cyFraction="0.02"
+        app:domeOpacity="0.4" />
 
-    <!-- Content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="36dp">
+        android:paddingTop="40dp">
 
-        <!-- ── Navbar ── -->
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#CC0D2560"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="16dp">
 
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_arrow_back"
-                app:tint="#FFFFFF"
-                android:background="@drawable/ripple_glass_circle"
-                android:contentDescription="Back" />
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/nq_back"
+                app:tint="@color/h_text"
+                android:background="@drawable/bg_h_circle_btn"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:contentDescription="Orqaga" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:gravity="center"
                 android:layout_marginStart="4dp"
-                android:layout_marginEnd="40dp"
+                android:fontFamily="@font/lora"
+                android:textStyle="bold"
+                android:textColor="@color/h_text"
+                android:textSize="20sp"
                 android:maxLines="1"
                 android:ellipsize="end" />
         </LinearLayout>
 
-        <!-- ── Search bar ── -->
+        <com.example.manualapp.ui.widget.GirihDividerView
+            android:layout_width="match_parent"
+            android:layout_height="14dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="6dp" />
+
+        <!-- Search pill -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:orientation="horizontal"
-            android:background="@drawable/bg_search_bar"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_h_search"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="12dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:gravity="center_vertical">
+            android:layout_marginTop="14dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_search"
-                app:tint="#66FFFFFF"
-                android:layout_marginEnd="8dp" />
+                android:layout_width="19dp"
+                android:layout_height="19dp"
+                android:src="@drawable/nq_search"
+                app:tint="@color/h_text2"
+                android:contentDescription="@null" />
 
             <EditText
                 android:id="@+id/etSearch"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:hint="Qidirish..."
-                android:textColorHint="#66FFFFFF"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
+                android:layout_marginStart="10dp"
+                android:hint="Qidirish"
+                android:textColorHint="@color/h_text2"
+                android:textColor="@color/h_text"
+                android:fontFamily="@font/manrope"
+                android:textSize="14sp"
                 android:background="@null"
                 android:inputType="text"
                 android:imeOptions="actionSearch"
                 android:singleLine="true" />
         </LinearLayout>
 
-        <!-- ── File list ── -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="90dp"
-            android:clipToPadding="false" />
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="28dp"
+                android:scrollbars="none"
+                android:clipToPadding="false" />
+
+            <!-- Empty state -->
+            <LinearLayout
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/nq_uslublar"
+                    app:tint="@color/h_turq"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:text="Hech narsa topilmadi"
+                    android:fontFamily="@font/lora"
+                    android:textStyle="bold"
+                    android:textColor="@color/h_text"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Boshqa soʻz bilan qidirib koʻring."
+                    android:fontFamily="@font/manrope"
+                    android:textColor="@color/h_text2"
+                    android:textSize="13sp"
+                    android:gravity="center" />
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
-    <!-- ── Orange FAB ── -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <!-- FAB (shown only for the schools list) -->
+    <ImageButton
         android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
-        android:src="@drawable/ic_add"
-        app:tint="#FFFFFF"
-        android:contentDescription="Add"
-        app:backgroundTint="#FFB300"
-        app:borderWidth="0dp"
-        app:elevation="6dp"
-        app:fabSize="normal" />
+        android:src="@drawable/nq_plus"
+        app:tint="@color/h_bg"
+        android:background="@drawable/bg_h_fab"
+        android:scaleType="centerInside"
+        android:padding="16dp"
+        android:elevation="6dp"
+        android:visibility="gone"
+        android:contentDescription="Qoʻshish" />
 
-    <!-- ── Bottom nav bar ── -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_gravity="bottom"
-        android:background="#CC071535"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <View
-                android:layout_width="20dp"
-                android:layout_height="3dp"
-                android:background="@drawable/bg_nav_dot_active"
-                android:layout_marginBottom="3dp" />
-
-            <TextView
-                android:id="@+id/tvNavLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ro'yxat"
-                android:textColor="#FFFFFF"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
 </FrameLayout>

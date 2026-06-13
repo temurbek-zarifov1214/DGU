@@ -43,7 +43,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             applicationVariants.all { variant ->
                 variant.outputs.all {
-                    outputFileName = "Zamonaviy ta'lim texnologiyalari.apk"
+                    outputFileName = "Amaliy bezaklar sanati.apk"
                 }
             }
         }

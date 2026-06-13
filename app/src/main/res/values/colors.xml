@@ -4,6 +4,26 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
 
+    <!-- ══ HERITAGE PALETTE (Amaliy bezaklar sanati redesign) ══════ -->
+    <color name="h_bg">#0E1626</color>          <!-- deep lacquer background -->
+    <color name="h_bg_deep">#0A101E</color>     <!-- gradient overlays -->
+    <color name="h_surface">#1A2540</color>     <!-- card surface -->
+    <color name="h_surface2">#202C4A</color>    <!-- inputs / raised -->
+    <color name="h_border">#2E3D5C</color>      <!-- hairline border -->
+    <color name="h_turq">#3EC6C0</color>        <!-- majolica turquoise -->
+    <color name="h_turq_deep">#2BA8A2</color>   <!-- turquoise gradient end -->
+    <color name="h_gold">#D9A441</color>        <!-- zarduzlik gold -->
+    <color name="h_terra">#C75B39</color>       <!-- terracotta -->
+    <color name="h_sage">#7FA88B</color>        <!-- sage -->
+    <color name="h_lapis">#3D6FB4</color>       <!-- lapis -->
+    <color name="h_text">#F2EFE9</color>        <!-- primary ivory text -->
+    <color name="h_text2">#9AA5B8</color>       <!-- secondary text -->
+    <color name="h_navbar">#CC141C30</color>    <!-- floating nav glass -->
+    <color name="h_paper">#F7F3EA</color>       <!-- reader light paper -->
+    <color name="h_paper_dark">#131C30</color>  <!-- reader dark paper -->
+    <color name="h_ink">#1D2B50</color>         <!-- reader light ink -->
+    <color name="h_ink2">#5A6783</color>        <!-- reader light ink secondary -->
+
     <!-- ── Brand gradient ──────────────────────────────────────── -->
     <color name="bg_start">#071535</color>
     <color name="bg_mid">#0D2560</color>

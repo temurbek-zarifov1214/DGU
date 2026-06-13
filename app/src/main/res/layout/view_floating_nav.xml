@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_gravity="bottom"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="20dp"
+    android:background="@drawable/bg_h_nav"
+    android:orientation="horizontal"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp">
+
+    <LinearLayout
+        android:id="@+id/navHome"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless">
+
+        <ImageView
+            android:id="@+id/navHomeIcon"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:src="@drawable/nq_home"
+            app:tint="@color/h_text2"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/navHomeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Bosh sahifa"
+            android:fontFamily="@font/manrope"
+            android:textColor="@color/h_text2"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navVideo"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless">
+
+        <ImageView
+            android:id="@+id/navVideoIcon"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:src="@drawable/nq_video"
+            app:tint="@color/h_text2"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/navVideoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Video"
+            android:fontFamily="@font/manrope"
+            android:textColor="@color/h_text2"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navList"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless">
+
+        <ImageView
+            android:id="@+id/navListIcon"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:src="@drawable/nq_list"
+            app:tint="@color/h_text2"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/navListLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Roʻyxat"
+            android:fontFamily="@font/manrope"
+            android:textColor="@color/h_text2"
+            android:textSize="13sp" />
+    </LinearLayout>
+</LinearLayout>

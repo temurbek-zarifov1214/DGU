@@ -1,38 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/h_bg">
 
-    <!-- Particle background — first child so it's behind everything -->
+    <!-- Girih dome — large, centred, slowly drifting -->
     <com.example.manualapp.ui.particle.ParticleView
         android:id="@+id/splashParticleView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- Logo + ring canvas overlay -->
-    <com.example.manualapp.ui.splash.SplashRingView
-        android:id="@+id/splashRingView"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent" />
+        app:domeSize="540dp"
+        app:cxFraction="0.5"
+        app:cyFraction="0.46"
+        app:domeAnimated="true" />
 
-    <!-- Centred content -->
+    <!-- Centred lockup -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
-        android:gravity="center"
-        android:background="@android:color/transparent">
+        android:gravity="center">
 
         <ImageView
             android:id="@+id/splashIcon"
-            android:layout_width="88dp"
-            android:layout_height="88dp"
-            android:src="@drawable/ic_launcher_foreground"
-            android:background="@drawable/ic_launcher_background"
-            android:padding="4dp"
-            android:scaleType="fitCenter"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:src="@drawable/ic_rosette"
             android:alpha="0"
             android:contentDescription="@null" />
 
@@ -40,35 +35,61 @@
             android:id="@+id/splashTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/zamonaviy_ta_lim_texnologiyalari_fani"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:layout_marginTop="26dp"
+            android:text="@string/app_name"
+            android:fontFamily="@font/lora"
             android:textStyle="bold"
+            android:textColor="@color/h_text"
+            android:textSize="27sp"
             android:gravity="center"
-            android:letterSpacing="0.03"
             android:alpha="0" />
 
         <TextView
             android:id="@+id/splashSub"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="O\u02BBquv mobil ilovasi"
-            android:textColor="#A0FFFFFF"
-            android:textSize="13sp"
+            android:layout_marginTop="9dp"
+            android:text="OʻQUV MOBIL ILOVASI"
+            android:fontFamily="@font/manrope"
+            android:textStyle="bold"
+            android:textColor="@color/h_gold"
+            android:textSize="12sp"
+            android:letterSpacing="0.34"
             android:gravity="center"
             android:alpha="0" />
 
-        <ProgressBar
+        <com.example.manualapp.ui.widget.StarLoaderView
             android:id="@+id/splashProgress"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginTop="28dp"
-            android:indeterminate="true"
-            android:indeterminateTint="#FFFFFFFF"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="40dp"
             android:alpha="0" />
+    </LinearLayout>
 
+    <!-- Bottom divider + version -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:paddingStart="44dp"
+        android:paddingEnd="44dp"
+        android:paddingBottom="30dp">
+
+        <com.example.manualapp.ui.widget.GirihDividerView
+            android:layout_width="match_parent"
+            android:layout_height="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="VERSIYA 1.0.0"
+            android:fontFamily="@font/manrope"
+            android:textColor="@color/h_text2"
+            android:textSize="11sp"
+            android:letterSpacing="0.12"
+            android:gravity="center" />
     </LinearLayout>
 
 </FrameLayout>

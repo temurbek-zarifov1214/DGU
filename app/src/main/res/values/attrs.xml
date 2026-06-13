@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Heritage girih-dome background view (class kept as ParticleView) -->
+    <declare-styleable name="ParticleView">
+        <attr name="domeSize" format="dimension" />
+        <attr name="cxFraction" format="float" />
+        <attr name="cyFraction" format="float" />
+        <attr name="domeOpacity" format="float" />
+        <attr name="domeAnimated" format="boolean" />
+    </declare-styleable>
+</resources>

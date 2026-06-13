@@ -1,109 +1,303 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/h_bg">
 
-    <!-- Particle animated background -->
+    <!-- Girih dome — top-right corner -->
     <com.example.manualapp.ui.particle.ParticleView
-        android:id="@+id/particleView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- Main content -->
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="48dp">
+        app:domeSize="360dp"
+        app:cxFraction="0.96"
+        app:cyFraction="0.04"
+        app:domeOpacity="0.5" />
 
-        <!-- ── Header ── -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:clipToPadding="false"
+        android:paddingTop="44dp"
+        android:paddingBottom="96dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
-            android:paddingBottom="16dp"
-            tools:ignore="ExtraText">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
 
-            <!-- App icon (glass card) -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="74dp"
-                android:layout_height="74dp"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#1AFFFFFF"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp">
+            <!-- ── Header ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name"
+                        android:fontFamily="@font/lora"
+                        android:textStyle="bold"
+                        android:textColor="@color/h_text"
+                        android:textSize="23sp" />
+                </LinearLayout>
 
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_graduation"
-                    app:tint="#FFFFFF" />
-            </androidx.cardview.widget.CardView>
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:src="@drawable/ic_rosette"
+                    android:contentDescription="@null" />
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.example.manualapp.ui.widget.GirihDividerView
+                android:layout_width="match_parent"
+                android:layout_height="14dp"
+                android:layout_marginTop="14dp" />
+
+            <!-- ── Hero featured card ── -->
+            <FrameLayout
+                android:id="@+id/heroCard"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:lineSpacingExtra="2dp"
-                android:text="Barcha ta'lim yo'nalishlari uchun \nZamonaviy ta'lim texnologiyalari \nfanidan android mobil ilovasi"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="O'quv mobil ilovasi"
-                android:textColor="#99FFFFFF"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <!-- ── 2x4 Menu Grid ── -->
-        <GridLayout
-            android:id="@+id/menuGrid"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:columnCount="2"
-            android:rowCount="4"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="8dp"
-            android:useDefaultMargins="false" />
-
-        <!-- ── Bottom nav bar ── -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:background="#CC071535"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_h_card"
+                android:clipToOutline="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <View
-                    android:layout_width="20dp"
-                    android:layout_height="3dp"
-                    android:background="@drawable/bg_nav_dot_active"
-                    android:layout_marginBottom="3dp" />
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_h_strip" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/nq_ornament_corner"
+                    android:alpha="0.18"
+                    app:tint="@color/h_turq"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Bosh sahifa"
-                    android:textColor="#FFFFFF"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3 mavzu"
+                        android:background="@drawable/bg_h_goldpill"
+                        android:paddingStart="9dp"
+                        android:paddingEnd="9dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        android:fontFamily="@font/manrope"
+                        android:textStyle="bold"
+                        android:textColor="@color/h_gold"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Naqshlar tarix tilsimi"
+                        android:fontFamily="@font/lora"
+                        android:textStyle="bold"
+                        android:textColor="@color/h_text"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:maxWidth="240dp"
+                        android:text="Meʼmoriy obidalardagi naqshlar va davrlar silsilasi."
+                        android:fontFamily="@font/manrope"
+                        android:textColor="@color/h_text2"
+                        android:textSize="13sp"
+                        android:lineSpacingMultiplier="1.2" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Boshlash"
+                            android:fontFamily="@font/manrope"
+                            android:textStyle="bold"
+                            android:textColor="@color/h_turq"
+                            android:textSize="13sp" />
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginStart="4dp"
+                            android:src="@drawable/nq_chevron"
+                            app:tint="@color/h_turq"
+                            android:contentDescription="@null" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- ── O'rganish ── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"
+                android:text="OʻRGANISH"
+                android:fontFamily="@font/manrope"
+                android:textStyle="bold"
+                android:textColor="@color/h_gold"
+                android:textSize="11sp"
+                android:letterSpacing="0.22" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <include layout="@layout/item_learn_card" android:id="@+id/cardUslublar"
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+
+                <Space android:layout_width="12dp" android:layout_height="1dp" />
+
+                <include layout="@layout/item_learn_card" android:id="@+id/cardChizish"
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <include layout="@layout/item_learn_card" android:id="@+id/cardIlhom"
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+
+                <Space android:layout_width="12dp" android:layout_height="1dp" />
+
+                <include layout="@layout/item_learn_card" android:id="@+id/cardAsbob"
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- ── Video darslar entry ── -->
+            <FrameLayout
+                android:id="@+id/cardVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_h_card"
+                android:foreground="?attr/selectableItemBackground">
+
+                <View
+                    android:layout_width="3dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_h_strip" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp">
+
+                    <FrameLayout
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:background="@drawable/bg_tile_turq">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/nq_video"
+                            app:tint="@color/h_turq"
+                            android:contentDescription="@null" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="14dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Video darslar"
+                            android:fontFamily="@font/manrope"
+                            android:textStyle="bold"
+                            android:textColor="@color/h_text"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Darslar va oʻquv videolari"
+                            android:fontFamily="@font/manrope"
+                            android:textColor="@color/h_text2"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/nq_chevron"
+                        app:tint="@color/h_gold"
+                        android:contentDescription="@null" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- ── Ma'lumot ── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="6dp"
+                android:text="MAʼLUMOT"
+                android:fontFamily="@font/manrope"
+                android:textStyle="bold"
+                android:textColor="@color/h_gold"
+                android:textSize="11sp"
+                android:letterSpacing="0.22" />
+
+            <include layout="@layout/item_info_row" android:id="@+id/rowMuallif"
+                android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/h_border" />
+            <include layout="@layout/item_info_row" android:id="@+id/rowYoriq"
+                android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/h_border" />
+            <include layout="@layout/item_info_row" android:id="@+id/rowDgu"
+                android:layout_width="match_parent" android:layout_height="wrap_content" />
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
+
+    <!-- ── Floating bottom nav ── -->
+    <include layout="@layout/view_floating_nav" />
+
 </FrameLayout>

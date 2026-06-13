@@ -2,121 +2,167 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/h_bg">
 
-    <!-- LAYER 1: Particle animated background -->
-    <com.example.manualapp.ui.particle.ParticleView
-        android:id="@+id/particleView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- LAYER 2: Screen content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@android:color/transparent"
         android:paddingTop="36dp">
 
-        <!-- ── Navbar (#0D2560) ───────────────────────────────────────── -->
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#CC0D2560"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="8dp">
 
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_arrow_back"
-                app:tint="#FFFFFF"
-                android:background="@drawable/ripple_glass_circle"
-                android:contentDescription="Back" />
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/nq_back"
+                app:tint="@color/h_text"
+                android:background="@drawable/bg_h_circle_btn"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:contentDescription="Orqaga" />
 
-            <TextView
-                android:id="@+id/tvTitle"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:maxLines="1"
-                android:ellipsize="middle"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp" />
+                android:layout_marginStart="6dp"
+                android:orientation="vertical">
 
-            <!-- Balance spacer -->
-            <View
-                android:layout_width="36dp"
-                android:layout_height="36dp" />
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lora"
+                    android:textStyle="bold"
+                    android:textColor="@color/h_text"
+                    android:textSize="15sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/tvSubLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="@font/manrope"
+                    android:textColor="@color/h_text2"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.1"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnTheme"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/nq_moon"
+                app:tint="@color/h_gold"
+                android:background="@drawable/bg_h_circle_btn"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:contentDescription="Oʻqish rejimi" />
+
+            <ImageButton
+                android:id="@+id/btnShare"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/nq_share"
+                app:tint="@color/h_text"
+                android:background="@drawable/bg_h_circle_btn"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:contentDescription="Ulashish" />
         </LinearLayout>
 
-        <!-- ── PDF Viewer wrapped in CardView for subtle border ───────── -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="#1A071535"
-            app:strokeColor="#22FFFFFF"
-            app:strokeWidth="1dp">
-
-            <com.github.barteksc.pdfviewer.PDFView
-                android:id="@+id/pdfView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- ── Page navigation bar ────────────────────────────────────── -->
+        <!-- Gold reading-progress bar -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="3dp"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:background="#CC0D2560"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:background="@color/h_border">
 
-            <ImageButton
-                android:id="@+id/btnPrev"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_arrow_back"
-                app:tint="#B3FFFFFF"
-                android:background="@drawable/ripple_glass_circle"
-                android:contentDescription="Previous" />
-
-            <TextView
-                android:id="@+id/tvPageInfo"
+            <View
+                android:id="@+id/progressFill"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:gravity="center"
-                android:text="1 / 1 bet" />
+                android:layout_height="match_parent"
+                android:layout_weight="0.02"
+                android:background="@drawable/bg_h_progress" />
 
-            <ImageButton
-                android:id="@+id/btnNext"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_chevron_right"
-                app:tint="#B3FFFFFF"
-                android:background="@drawable/ripple_glass_circle"
-                android:contentDescription="Next" />
+            <View
+                android:id="@+id/progressRest"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.98" />
         </LinearLayout>
 
+        <!-- PDF surface -->
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/pdfView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
     </LinearLayout>
+
+    <!-- Floating page-nav pill -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_h_pill_dark"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <ImageButton
+            android:id="@+id/btnPrev"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:src="@drawable/nq_back"
+            app:tint="@color/h_text2"
+            android:background="@drawable/bg_h_circle_btn"
+            android:scaleType="centerInside"
+            android:padding="7dp"
+            android:contentDescription="Oldingi" />
+
+        <TextView
+            android:id="@+id/tvPageInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="56dp"
+            android:gravity="center"
+            android:text="1 / 1"
+            android:fontFamily="@font/manrope"
+            android:textStyle="bold"
+            android:textColor="@color/h_text"
+            android:textSize="13sp"
+            android:letterSpacing="0.04" />
+
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:src="@drawable/nq_chevron"
+            app:tint="@color/h_text"
+            android:background="@drawable/bg_h_circle_btn"
+            android:scaleType="centerInside"
+            android:padding="7dp"
+            android:contentDescription="Keyingi" />
+    </LinearLayout>
+
 </FrameLayout>
